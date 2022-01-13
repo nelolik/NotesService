@@ -2,9 +2,12 @@ package ru.nelolik.studingspring.SpringWebMVC.db.dao;
 
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.nelolik.studingspring.SpringWebMVC.db.dataset.User;
 
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
@@ -12,15 +15,13 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Component
+@Repository
 public class UsersDAO_Hibernate implements UsersDao{
 
-    private Session session;
-    private Configuration configuration;
     private SessionFactory sessionFactory;
 
-    public UsersDAO_Hibernate(Session session, Configuration configuration, SessionFactory sessionFactory) {
-        this.session = session;
-        this.configuration = configuration;
+    @Autowired
+    public UsersDAO_Hibernate(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
@@ -31,7 +32,6 @@ public class UsersDAO_Hibernate implements UsersDao{
     public List<User> index() {
         List<User> list = null;
         try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
             String sql = "from " + User.class.getSimpleName();
             list = session.createQuery(sql).list();
         } catch (HibernateException e) {
@@ -46,12 +46,7 @@ public class UsersDAO_Hibernate implements UsersDao{
         User user = null;
         try {
             Session session = sessionFactory.openSession();
-            CriteriaBuilder criteriaBuilder = sessionFactory.getCriteriaBuilder();
-            CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
-            Root<User> root = criteriaQuery.from(User.class);
-            criteriaQuery.where(criteriaBuilder.equal(root.get("id"), id));
-            session.createQuery(criteriaQuery).executeUpdate();
-//            user = session.get(User.class, id);
+            user = session.get(User.class, id);
             session.close();
         } catch (HibernateException e) {
             e.printStackTrace();
@@ -78,7 +73,14 @@ public class UsersDAO_Hibernate implements UsersDao{
 
     @Override
     public void edit(User user) {
-
+        Transaction transaction;
+        try (Session session = sessionFactory.openSession()) {
+            transaction = session.beginTransaction();
+            session.save(user);
+            transaction.commit();
+        } catch (HibernateException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
