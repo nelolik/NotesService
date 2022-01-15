@@ -76,7 +76,7 @@ public class UsersDAO_Hibernate implements UsersDao{
         Transaction transaction;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
-            session.save(user);
+            session.update(user);
             transaction.commit();
         } catch (HibernateException e) {
             e.printStackTrace();

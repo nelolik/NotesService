@@ -12,6 +12,8 @@ import ru.nelolik.studingspring.SpringWebMVC.db.service.NotesService;
 import ru.nelolik.studingspring.SpringWebMVC.db.service.UsersService;
 import ru.nelolik.studingspring.SpringWebMVC.model.UserInput;
 
+import javax.servlet.http.HttpServletRequest;
+import java.net.http.HttpRequest;
 import java.util.List;
 
 @Controller
@@ -34,15 +36,45 @@ public class UsersController {
         return "users/index";
     }
 
+    @GetMapping("/new")
+    public String addNewUser(@ModelAttribute UserInput input) {
+        usersService.insert(new User(0L, input.getInput()));
+        return "redirect:/users";
+    }
+
+    @GetMapping("/manage")
+    public String manageUsers(Model model) {
+        List<User> users = usersService.index();
+        model.addAttribute("users", users);
+//        model.addAttribute("user", new User(1L, "User"));
+        System.out.println("We are in get controller /manage");
+        return "users/manage";
+    }
+
+    @PostMapping("/manage")
+    public String deleteUser(User user, HttpServletRequest request) {
+        String method = request.getParameter("method");
+        String id = request.getParameter("id");
+        if (method == null) {
+            return "redirect:/users/manage";
+        }
+        if (method.equals("edit") && id != null && user.getName() != null) {
+            usersService.edit(new User(Long.valueOf(id), user.getName()));
+        } else if (method.equals("delete") && id != null) {
+            usersService.delete(Long.valueOf(id));
+        }
+        return "redirect:/users/manage";
+    }
+
     @GetMapping("/{id}")
     public String showUser(@PathVariable("id") long id, Model model) {
         User user = usersService.user(id);
         List<Note> notes = notesService.getNotesByUserId(id);
         model.addAttribute("user", user);
         model.addAttribute("notes", notes);
-        model.addAttribute("input", new UserInput());
         return "users/user";
     }
+
 
     @PostMapping("/{id}")
     public String addUserNote(@ModelAttribute UserInput input,
@@ -62,6 +94,11 @@ public class UsersController {
                                     @PathVariable("noteId") long noteId) {
         notesService.removeNote(noteId);
         return "redirect:/users/" + userId;
+    }
+
+    @ModelAttribute
+    public void addUserInputAttribute(Model model) {
+        model.addAttribute("input", new UserInput());
     }
 }
 

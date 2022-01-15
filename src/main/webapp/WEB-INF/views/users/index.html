@@ -8,9 +8,17 @@
 
 <div th:each="user: ${users}">
     <a th:href="@{/users/{id}(id=${user.getId()})}"
-       th:text="${user.getName() + ', ' + user.getId()}">user</a>
+       th:text="${user.getName()}">user</a>
 </div>
+<br>
+<br>
+<form th:method="GET" th:action="@{/users/new}" th:object="${input}">
+    <label for="newUser">Enter name: </label>
+    <input type="text" th:field="*{input}" id="newUser">
+    <input type="submit" value="Save new user">
+</form>
+<br>
+<a th:href="@{/users/manage}">Manage users</a>
 
-<!--<a href="/people/new">Create new person</a>-->
 </body>
 </html>
