@@ -16,7 +16,8 @@ import java.util.Objects;
 @AllArgsConstructor
 public class Note {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "notes_id", sequenceName = "notes_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notes_id" )
     @Column(name = "id", nullable = false)
     private Long id;
 

@@ -1,11 +1,13 @@
 package ru.nelolik.studingspring.SpringWebMVC.db.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.nelolik.studingspring.SpringWebMVC.db.dao.NotesDAO;
 import ru.nelolik.studingspring.SpringWebMVC.db.dataset.Note;
 
 import java.util.List;
 
+@Component
 public class NotesServiceImpl implements NotesService{
 
     private NotesDAO notesDAO;
