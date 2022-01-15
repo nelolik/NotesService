@@ -13,7 +13,8 @@ import java.util.Objects;
 @AllArgsConstructor
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "users_id", sequenceName = "user_id_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id" )
     @Column(name = "id", nullable = false)
     private Long id;
 
