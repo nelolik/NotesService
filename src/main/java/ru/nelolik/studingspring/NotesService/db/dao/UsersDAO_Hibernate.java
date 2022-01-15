@@ -1,16 +1,13 @@
-package ru.nelolik.studingspring.SpringWebMVC.db.dao;
+package ru.nelolik.studingspring.NotesService.db.dao;
 
 import org.hibernate.*;
-import org.hibernate.cfg.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
-import ru.nelolik.studingspring.SpringWebMVC.db.dataset.User;
+import ru.nelolik.studingspring.NotesService.db.dataset.User;
 
-import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.List;
 

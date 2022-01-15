@@ -1,4 +1,4 @@
-package ru.nelolik.studingspring.SpringWebMVC.model;
+package ru.nelolik.studingspring.NotesService.model;
 
 import lombok.Getter;
 import lombok.Setter;

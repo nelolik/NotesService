@@ -1,6 +1,6 @@
-package ru.nelolik.studingspring.SpringWebMVC.db.service;
+package ru.nelolik.studingspring.NotesService.db.service;
 
-import ru.nelolik.studingspring.SpringWebMVC.db.dataset.Note;
+import ru.nelolik.studingspring.NotesService.db.dataset.Note;
 
 import java.util.List;
 

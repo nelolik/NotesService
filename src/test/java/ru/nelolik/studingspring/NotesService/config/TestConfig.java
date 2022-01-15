@@ -1,20 +1,20 @@
-package ru.nelolik.studingspring.SpringWebMVC.config;
+package ru.nelolik.studingspring.NotesService.config;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.service.ServiceRegistry;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import ru.nelolik.studingspring.SpringWebMVC.db.dao.NotesDAO;
-import ru.nelolik.studingspring.SpringWebMVC.db.dao.NotesDAO_Hibernate;
-import ru.nelolik.studingspring.SpringWebMVC.db.dao.UsersDAO_Hibernate;
-import ru.nelolik.studingspring.SpringWebMVC.db.dao.UsersDao;
-import ru.nelolik.studingspring.SpringWebMVC.db.dataset.Note;
-import ru.nelolik.studingspring.SpringWebMVC.db.dataset.User;
-import ru.nelolik.studingspring.SpringWebMVC.db.service.NotesService;
-import ru.nelolik.studingspring.SpringWebMVC.db.service.NotesServiceImpl;
-import ru.nelolik.studingspring.SpringWebMVC.db.service.UserServiceImpl;
-import ru.nelolik.studingspring.SpringWebMVC.db.service.UsersService;
+import org.springframework.context.annotation.ComponentScan;
+import ru.nelolik.studingspring.NotesService.db.dao.NotesDAO;
+import ru.nelolik.studingspring.NotesService.db.dao.NotesDAO_Hibernate;
+import ru.nelolik.studingspring.NotesService.db.dao.UsersDAO_Hibernate;
+import ru.nelolik.studingspring.NotesService.db.dao.UsersDao;
+import ru.nelolik.studingspring.NotesService.db.dataset.Note;
+import ru.nelolik.studingspring.NotesService.db.dataset.User;
+import ru.nelolik.studingspring.NotesService.db.service.NotesService;
+import ru.nelolik.studingspring.NotesService.db.service.NotesServiceImpl;
+import ru.nelolik.studingspring.NotesService.db.service.UserServiceImpl;
+import ru.nelolik.studingspring.NotesService.db.service.UsersService;
 
 @Configuration
 public class TestConfig {
@@ -44,7 +44,7 @@ public class TestConfig {
         configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(Note.class);
 
-        configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+        configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL10Dialect");
         configuration.setProperty("hibernate.connection.driver_class", "org.h2.Driver");
         configuration.setProperty("hibernate.connection.url", "jdbc:h2:./h2db");
         configuration.setProperty("hibernate.connection.username", "test");

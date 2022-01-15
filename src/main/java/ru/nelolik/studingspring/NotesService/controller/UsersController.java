@@ -1,4 +1,4 @@
-package ru.nelolik.studingspring.SpringWebMVC.controller;
+package ru.nelolik.studingspring.NotesService.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,14 +6,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.nelolik.studingspring.SpringWebMVC.db.dataset.Note;
-import ru.nelolik.studingspring.SpringWebMVC.db.dataset.User;
-import ru.nelolik.studingspring.SpringWebMVC.db.service.NotesService;
-import ru.nelolik.studingspring.SpringWebMVC.db.service.UsersService;
-import ru.nelolik.studingspring.SpringWebMVC.model.UserInput;
+import ru.nelolik.studingspring.NotesService.db.dataset.Note;
+import ru.nelolik.studingspring.NotesService.db.dataset.User;
+import ru.nelolik.studingspring.NotesService.db.service.NotesService;
+import ru.nelolik.studingspring.NotesService.db.service.UsersService;
+import ru.nelolik.studingspring.NotesService.model.UserInput;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.http.HttpRequest;
 import java.util.List;
 
 @Controller

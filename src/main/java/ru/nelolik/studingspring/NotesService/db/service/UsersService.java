@@ -1,10 +1,11 @@
-package ru.nelolik.studingspring.SpringWebMVC.db.dao;
+package ru.nelolik.studingspring.NotesService.db.service;
 
-import ru.nelolik.studingspring.SpringWebMVC.db.dataset.User;
+import ru.nelolik.studingspring.NotesService.db.dataset.User;
 
 import java.util.List;
 
-public interface UsersDao {
+
+public interface UsersService {
     List<User> index();
     User user(long id);
     long insert(User user);

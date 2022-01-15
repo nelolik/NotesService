@@ -1,6 +1,5 @@
-package ru.nelolik.studingspring.SpringWebMVC.db.service;
+package ru.nelolik.studingspring.NotesService.db.service;
 
-import org.apache.catalina.LifecycleState;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -9,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import ru.nelolik.studingspring.SpringWebMVC.config.TestConfig;
-import ru.nelolik.studingspring.SpringWebMVC.db.dataset.Note;
+import ru.nelolik.studingspring.NotesService.config.TestConfig;
+import ru.nelolik.studingspring.NotesService.db.dataset.Note;
 
 import java.util.ArrayList;
 import java.util.List;

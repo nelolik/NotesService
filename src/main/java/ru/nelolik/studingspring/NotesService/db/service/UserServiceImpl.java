@@ -1,9 +1,9 @@
-package ru.nelolik.studingspring.SpringWebMVC.db.service;
+package ru.nelolik.studingspring.NotesService.db.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.nelolik.studingspring.SpringWebMVC.db.dao.UsersDao;
-import ru.nelolik.studingspring.SpringWebMVC.db.dataset.User;
+import ru.nelolik.studingspring.NotesService.db.dao.UsersDao;
+import ru.nelolik.studingspring.NotesService.db.dataset.User;
 
 import java.util.List;
 

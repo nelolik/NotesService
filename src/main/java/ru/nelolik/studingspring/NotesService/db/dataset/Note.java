@@ -1,8 +1,7 @@
-package ru.nelolik.studingspring.SpringWebMVC.db.dataset;
+package ru.nelolik.studingspring.NotesService.db.dataset;
 
 
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 

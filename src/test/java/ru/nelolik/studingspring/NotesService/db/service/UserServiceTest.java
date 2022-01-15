@@ -1,18 +1,15 @@
-package ru.nelolik.studingspring.SpringWebMVC.db.service;
+package ru.nelolik.studingspring.NotesService.db.service;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.Assertions;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import ru.nelolik.studingspring.SpringWebMVC.config.TestConfig;
-import ru.nelolik.studingspring.SpringWebMVC.db.dataset.User;
+import ru.nelolik.studingspring.NotesService.config.TestConfig;
+import ru.nelolik.studingspring.NotesService.db.dataset.User;
 
 import java.util.ArrayList;
 import java.util.List;

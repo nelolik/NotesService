@@ -1,14 +1,13 @@
-package ru.nelolik.studingspring.SpringWebMVC.db.dao;
+package ru.nelolik.studingspring.NotesService.db.dao;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.CriteriaQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
-import ru.nelolik.studingspring.SpringWebMVC.db.dataset.Note;
+import ru.nelolik.studingspring.NotesService.db.dataset.Note;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;

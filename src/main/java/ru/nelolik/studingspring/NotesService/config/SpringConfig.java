@@ -1,4 +1,4 @@
-package ru.nelolik.studingspring.SpringWebMVC.config;
+package ru.nelolik.studingspring.NotesService.config;
 
 
 import org.hibernate.SessionFactory;
@@ -12,11 +12,11 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
-import ru.nelolik.studingspring.SpringWebMVC.db.dataset.Note;
-import ru.nelolik.studingspring.SpringWebMVC.db.dataset.User;
+import ru.nelolik.studingspring.NotesService.db.dataset.Note;
+import ru.nelolik.studingspring.NotesService.db.dataset.User;
 
 @Configuration
-@ComponentScan("ru.nelolik.studingspring.SpringWebMVC")
+@ComponentScan("ru.nelolik.studingspring.NotesService")
 public class SpringConfig  implements WebMvcConfigurer {
 
     private ApplicationContext context;

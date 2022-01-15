@@ -1,4 +1,4 @@
-package ru.nelolik.studingspring.SpringWebMVC;
+package ru.nelolik.studingspring.NotesService;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

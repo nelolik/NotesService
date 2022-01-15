@@ -1,4 +1,4 @@
-package ru.nelolik.studingspring.SpringWebMVC.db.dataset;
+package ru.nelolik.studingspring.NotesService.db.dataset;
 
 
 import lombok.*;

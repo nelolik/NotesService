@@ -1,4 +1,4 @@
-package ru.nelolik.studingspring.SpringWebMVC;
+package ru.nelolik.studingspring.NotesService;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
