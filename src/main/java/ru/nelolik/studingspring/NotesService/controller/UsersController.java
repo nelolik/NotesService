@@ -60,7 +60,9 @@ public class UsersController {
         if (method.equals("edit") && id != null && user.getName() != null) {
             usersService.edit(new User(Long.valueOf(id), user.getName()));
         } else if (method.equals("delete") && id != null) {
-            usersService.delete(Long.valueOf(id));
+            long userId = Long.valueOf(id);
+            usersService.delete(userId);
+            notesService.removeUserNotes(userId);
         }
         return "redirect:/users/manage";
     }
