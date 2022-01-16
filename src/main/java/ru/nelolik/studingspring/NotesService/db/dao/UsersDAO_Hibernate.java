@@ -13,7 +13,7 @@ import java.util.List;
 
 @Component
 @Repository
-public class UsersDAO_Hibernate implements UsersDao{
+public class UsersDAO_Hibernate implements UsersDAO {
 
     private SessionFactory sessionFactory;
 

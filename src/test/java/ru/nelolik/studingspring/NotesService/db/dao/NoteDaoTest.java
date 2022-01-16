@@ -1,4 +1,4 @@
-package ru.nelolik.studingspring.NotesService.db.service;
+package ru.nelolik.studingspring.NotesService.db.dao;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,10 +16,10 @@ import java.util.List;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class, loader = AnnotationConfigContextLoader.class)
-public class NoteServiceTest {
+public class NoteDaoTest {
 
     @Autowired
-    private NotesService notesService;
+    private NotesDAO notesDAO;
 
     private static List<Note> notes;
 
@@ -40,7 +40,7 @@ public class NoteServiceTest {
         long lastId = 0;
         for (Note n :
                 notes) {
-            notesService.addNote(n);
+            notesDAO.addNote(n);
             lastId++;
         }
         Assertions.assertEquals(notes.size(), lastId,
@@ -51,9 +51,9 @@ public class NoteServiceTest {
     @Test
     public void removeTest() {
         insertNotes();
-        Note noteFromDb = notesService.index().get(1);
-        notesService.removeNote(noteFromDb.getId());
-        List<Note> restNotes = notesService.index();
+        Note noteFromDb = notesDAO.getAllNotes().get(1);
+        notesDAO.removeNote(noteFromDb.getId());
+        List<Note> restNotes = notesDAO.getAllNotes();
         boolean removed = true;
         for (Note n :
                 restNotes) {
@@ -68,9 +68,8 @@ public class NoteServiceTest {
 
     @Test
     public void getNoteByIdTest() {
-//        clearDb();
         insertNotes();
-        Note firstNote = notesService.getNoteById(1L);
+        Note firstNote = notesDAO.getOneNote(1L);
         Assertions.assertNotNull(firstNote, "Could not get Note by id 1");
     }
 
@@ -78,7 +77,7 @@ public class NoteServiceTest {
     public void indexTest() {
         clearDb();
         insertNotes();
-        List<Note> notesFromDb = notesService.index();
+        List<Note> notesFromDb = notesDAO.getAllNotes();
         Assertions.assertTrue(notes.equals(notesFromDb), "Recorded and returned list are not equals.");
     }
 
@@ -86,9 +85,9 @@ public class NoteServiceTest {
     public void getAllByUserIdTest() {
         clearDb();
         insertNotes();
-        List<Note> notesOfUser1 = notesService.getNotesByUserId(1L);
-        List<Note> notesOfUser2 = notesService.getNotesByUserId(2L);
-        List<Note> notesOfUser100 = notesService.getNotesByUserId(100L);
+        List<Note> notesOfUser1 = notesDAO.getNotesByUserId(1L);
+        List<Note> notesOfUser2 = notesDAO.getNotesByUserId(2L);
+        List<Note> notesOfUser100 = notesDAO.getNotesByUserId(100L);
         Assertions.assertEquals(3, notesOfUser1.size(), "Count of notes of user with id=1 does not match.");
         Assertions.assertEquals(1, notesOfUser2.size(), "Count of notes of user with id=2 does not match.");
         Assertions.assertEquals(0, notesOfUser100.size(), "Count of notes of user with id=100 should be 0.");
@@ -98,10 +97,10 @@ public class NoteServiceTest {
     @Test
     public void removeUserNotesTest() {
         insertNotes();
-        List<Note> user1Notes = notesService.getNotesByUserId(1);
+        List<Note> user1Notes = notesDAO.getNotesByUserId(1);
         Assertions.assertTrue(user1Notes.size() > 0, "Db doesn`t contains notes for userId = 1.");
-        notesService.removeUserNotes(1);
-        List<Note> removedNotes = notesService.getNotesByUserId(1);
+        notesDAO.removeUserNotes(1);
+        List<Note> removedNotes = notesDAO.getNotesByUserId(1);
         Assertions.assertEquals(0, removedNotes.size(), "Notes od user with userId = 1 was not removed.");
         clearDb();
     }
@@ -109,15 +108,15 @@ public class NoteServiceTest {
     private void insertNotes() {
         for (Note n :
                 notes) {
-            notesService.addNote(n);
+            notesDAO.addNote(n);
         }
     }
     
     private void clearDb() {
-        List<Note> notes = notesService.index();
+        List<Note> notes = notesDAO.getAllNotes();
         for (Note n :
                 notes) {
-            notesService.removeNote(n.getId());
+            notesDAO.removeNote(n.getId());
         }
     }
 }

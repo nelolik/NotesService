@@ -1,4 +1,4 @@
-package ru.nelolik.studingspring.NotesService.db.service;
+package ru.nelolik.studingspring.NotesService.db.dao;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -16,10 +16,15 @@ import java.util.List;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class, loader = AnnotationConfigContextLoader.class)
-public class UserServiceTest {
+public class UserDaoTest {
+
+
+    private UsersDAO usersDao;
 
     @Autowired
-    private UsersService usersService;
+    public UserDaoTest(UsersDAO usersService) {
+        this.usersDao = usersService;
+    }
 
     private static List<User> users;
 
@@ -37,7 +42,7 @@ public class UserServiceTest {
         long lastId = 0;
         for (User user :
                 users) {
-            lastId = usersService.insert(user);
+            lastId = usersDao.insert(user);
         }
         Assertions.assertEquals(users.size(), lastId,
                 "Count of inserted values is not equal to users size");
@@ -47,7 +52,7 @@ public class UserServiceTest {
     public void indexTest() {
         clearDb();
         insertUsers();
-        List<User> usersFromDb = usersService.index();
+        List<User> usersFromDb = usersDao.index();
         boolean sizeEqual = users.size() == usersFromDb.size();
         Assertions.assertTrue(sizeEqual, "Count of written and read records differs");
         boolean elementsAreEqual = true;
@@ -65,9 +70,9 @@ public class UserServiceTest {
 
     @Test
     public void readUserTest() {
-        User userFromDb = usersService.index().get(0);
+        User userFromDb = usersDao.index().get(0);
         if (userFromDb != null) {
-            User user = usersService.user(userFromDb.getId());
+            User user = usersDao.user(userFromDb.getId());
             Assertions.assertTrue(user.equals(userFromDb), "Users with the same id are not equal.");
         } else {
             Assertions.assertEquals(true, false, "Empty index");
@@ -76,11 +81,11 @@ public class UserServiceTest {
 
     @Test
     public void testEdit() {
-        User userFromDb = usersService.index().get(1);
+        User userFromDb = usersDao.index().get(1);
         String oldName = userFromDb.getName();
         userFromDb.setName("New name");
-        usersService.edit(userFromDb);
-        User newUser = usersService.user(userFromDb.getId());
+        usersDao.edit(userFromDb);
+        User newUser = usersDao.user(userFromDb.getId());
         Assertions.assertTrue(newUser.equals(userFromDb), "Edited name is not the same like new one. Old name: "
                 + oldName + " New name: " + newUser.getName());
     }
@@ -88,9 +93,9 @@ public class UserServiceTest {
     @Test
     public void testDelete() {
         insertUsers();
-        User userFromDb = usersService.index().get(1);
-        usersService.delete(userFromDb.getId());
-        List<User> allUsers = usersService.index();
+        User userFromDb = usersDao.index().get(1);
+        usersDao.delete(userFromDb.getId());
+        List<User> allUsers = usersDao.index();
         boolean deleted = true;
         for (User u :
                 allUsers) {
@@ -110,8 +115,8 @@ public class UserServiceTest {
         long oldId = 1;
         newUser.setId(oldId);
         newUser.setName("Autoname");
-        usersService.insert(newUser);
-        List<User> result = usersService.index();
+        usersDao.insert(newUser);
+        List<User> result = usersDao.index();
         boolean changed = true;
         for (User u :
                 result) {
@@ -127,15 +132,15 @@ public class UserServiceTest {
     private void insertUsers() {
         for (User user :
                 users) {
-            usersService.insert(user);
+            usersDao.insert(user);
         }
     }
 
     private void clearDb() {
-        List<User> allUsers = usersService.index();
+        List<User> allUsers = usersDao.index();
         for (User u :
                 allUsers) {
-            usersService.delete(u.getId());
+            usersDao.delete(u.getId());
         }
     }
 

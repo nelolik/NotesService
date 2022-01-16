@@ -2,7 +2,7 @@ package ru.nelolik.studingspring.NotesService.db.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.nelolik.studingspring.NotesService.db.dao.UsersDao;
+import ru.nelolik.studingspring.NotesService.db.dao.UsersDAO;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
 
 import java.util.List;
@@ -11,10 +11,10 @@ import java.util.List;
 @Component
 public class UserServiceImpl implements UsersService{
 
-    private UsersDao usersDao;
+    private UsersDAO usersDao;
 
     @Autowired
-    public UserServiceImpl(UsersDao usersDao) {
+    public UserServiceImpl(UsersDAO usersDao) {
         this.usersDao = usersDao;
     }
 
