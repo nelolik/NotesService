@@ -17,6 +17,8 @@ import ru.nelolik.studingspring.NotesService.db.service.NotesServiceImpl;
 import ru.nelolik.studingspring.NotesService.db.service.UserServiceImpl;
 import ru.nelolik.studingspring.NotesService.db.service.UsersService;
 
+import static org.mockito.Mockito.mock;
+
 @TestConfiguration
 @ComponentScan("test.ru.nelolik.studingspring.NotesService")
 public class TestConfig {
@@ -25,20 +27,20 @@ public class TestConfig {
         return new UsersDAO_Hibernate(createSessionFactory(getH2Configuration()));
     }
 
-    @Bean
-    public UsersService usersService() {
-        return new UserServiceImpl(usersDao());
-    }
+//    @Bean
+//    public UsersService usersService() {
+//        return mock(UsersService.class);
+//    }
 
     @Bean
     public NotesDAO notesDAO() {
         return new NotesDAO_Hibernate(createSessionFactory(getH2Configuration()));
     }
 
-    @Bean
-    public NotesService notesService() {
-        return new NotesServiceImpl(notesDAO());
-    }
+//    @Bean
+//    public NotesService notesService() {
+//        return new NotesServiceImpl(notesDAO());
+//    }
 
     public org.hibernate.cfg.Configuration getH2Configuration() {
         org.hibernate.cfg.Configuration configuration = new org.hibernate.cfg.Configuration();
