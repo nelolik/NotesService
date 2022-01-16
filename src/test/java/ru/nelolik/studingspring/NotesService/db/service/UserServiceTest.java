@@ -2,16 +2,10 @@ package ru.nelolik.studingspring.NotesService.db.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.nelolik.studingspring.NotesService.db.dao.UsersDAO;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

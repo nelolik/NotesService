@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -15,8 +16,11 @@ import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import ru.nelolik.studingspring.NotesService.db.dataset.Note;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
 
+import javax.annotation.Resources;
+
 @Configuration
 @ComponentScan("ru.nelolik.studingspring.NotesService")
+@PropertySource("classpath:application.properties")
 public class SpringConfig  implements WebMvcConfigurer {
 
     private ApplicationContext context;
@@ -44,7 +48,6 @@ public class SpringConfig  implements WebMvcConfigurer {
         return templateEngine;
     }
 
-    @Bean
     public org.hibernate.cfg.Configuration getHibernateConfig() {
         org.hibernate.cfg.Configuration configuration = new org.hibernate.cfg.Configuration();
         configuration.addAnnotatedClass(User.class);
@@ -60,7 +63,8 @@ public class SpringConfig  implements WebMvcConfigurer {
     }
 
     @Bean
-    public static SessionFactory createSessionFactory(org.hibernate.cfg.Configuration configuration) {
+    public SessionFactory createSessionFactory() {
+        org.hibernate.cfg.Configuration configuration = getHibernateConfig();
         StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder();
         builder.applySettings(configuration.getProperties());
         ServiceRegistry serviceRegistry = builder.build();
