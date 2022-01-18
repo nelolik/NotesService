@@ -13,6 +13,7 @@ import ru.nelolik.studingspring.NotesService.db.service.UsersService;
 import ru.nelolik.studingspring.NotesService.model.UserInput;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -71,6 +72,12 @@ public class UsersController {
     public String showUser(@PathVariable("id") long id, Model model) {
         User user = usersService.user(id);
         List<Note> notes = notesService.getNotesByUserId(id);
+        if (user == null) {
+            user = new User();
+        }
+        if (notes == null) {
+            notes = new ArrayList<>();
+        }
         model.addAttribute("user", user);
         model.addAttribute("notes", notes);
         return "users/user";

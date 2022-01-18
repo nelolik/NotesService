@@ -66,7 +66,7 @@ public class UserControllerTest {
     @Test
     public void showUserTest() throws Exception {
         int id = 1;
-        mockMvc.perform(get("/users/{id}", 1)).
+        mockMvc.perform(get("/users/{id}", 3L)).
                 andExpect(model().attributeExists("user")).
                 andExpect(model().attributeExists("notes")).
                 andExpect(status().isOk()).
