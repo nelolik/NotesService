@@ -23,24 +23,15 @@ import static org.mockito.Mockito.mock;
 @ComponentScan("test.ru.nelolik.studingspring.NotesService")
 public class TestConfig {
 
-    @Bean public UsersDAO usersDao() {
+    @Bean
+    public UsersDAO usersDao() {
         return new UsersDAO_Hibernate(createSessionFactory(getH2Configuration()));
     }
-
-//    @Bean
-//    public UsersService usersService() {
-//        return mock(UsersService.class);
-//    }
 
     @Bean
     public NotesDAO notesDAO() {
         return new NotesDAO_Hibernate(createSessionFactory(getH2Configuration()));
     }
-
-//    @Bean
-//    public NotesService notesService() {
-//        return new NotesServiceImpl(notesDAO());
-//    }
 
     public org.hibernate.cfg.Configuration getH2Configuration() {
         org.hibernate.cfg.Configuration configuration = new org.hibernate.cfg.Configuration();

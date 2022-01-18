@@ -21,15 +21,10 @@ import javax.annotation.Resources;
 @Configuration
 @ComponentScan("ru.nelolik.studingspring.NotesService")
 @PropertySource("classpath:application.properties")
-public class SpringConfig  implements WebMvcConfigurer {
+public class SpringConfig {
 
-    private ApplicationContext context;
+    private ApplicationContext context; //TODO get rid of
     private Environment environment;
-
-    public SpringConfig(ApplicationContext context, Environment environment) {
-        this.context = context;
-        this.environment = environment;
-    }
 
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
