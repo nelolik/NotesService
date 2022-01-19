@@ -30,33 +30,33 @@ public class UserServiceTest {
 
     @Test
     public void getUserByIdTest() {
-        when(usersDAO.user(USER_ID)).thenReturn(USER);
-        User u = usersService.user(USER_ID);
+        when(usersDAO.getUserById(USER_ID)).thenReturn(USER);
+        User u = usersService.getUserById(USER_ID);
         Assertions.assertEquals(USER, u, "Mocked user and returned user ane not equal.");
     }
 
     @Test
-    public void insertNewUserTest() {
-        usersService.insert(USER);
-        verify(usersDAO, atLeastOnce()).insert(eq(USER));
+    public void insertUserTest() {
+        usersService.insertUser(USER);
+        verify(usersDAO, atLeastOnce()).insertUser(eq(USER));
     }
 
     @Test
     public void editUserTest() {
-        usersService.edit(USER);
-        verify(usersDAO, atLeastOnce()).edit(eq(USER));
+        usersService.editUser(USER);
+        verify(usersDAO, atLeastOnce()).editUser(eq(USER));
     }
 
     @Test
-    public void deleteUserTest() {
-        usersService.delete(USER_ID);
-        verify(usersDAO,atLeastOnce()).delete(eq(USER_ID));
+    public void removeUserByIdTest() {
+        usersService.removeUserById(USER_ID);
+        verify(usersDAO,atLeastOnce()).deleteUserById(eq(USER_ID));
     }
 
     @Test
-    public void indexTest() {
-        when(usersDAO.index()).thenReturn(USER_LIST);
-        List<User> result = usersService.index();
+    public void getAllUsersTest() {
+        when(usersDAO.getAllUsers()).thenReturn(USER_LIST);
+        List<User> result = usersService.getAllUsers();
         Assertions.assertEquals(USER_LIST, result, "Method index returned wrong result");
     }
 }

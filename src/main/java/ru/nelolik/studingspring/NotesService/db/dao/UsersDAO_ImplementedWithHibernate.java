@@ -13,20 +13,20 @@ import java.util.List;
 
 @Component
 @Repository
-public class UsersDAO_Hibernate implements UsersDAO {
+public class UsersDAO_ImplementedWithHibernate implements UsersDAO {
 
     private SessionFactory sessionFactory;
 
     @Autowired
-    public UsersDAO_Hibernate(SessionFactory sessionFactory) {
+    public UsersDAO_ImplementedWithHibernate(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
-    public UsersDAO_Hibernate() {
+    public UsersDAO_ImplementedWithHibernate() {
     }
 
     @Override
-    public List<User> index() {
+    public List<User> getAllUsers() {
         List<User> list = null;
         try (Session session = sessionFactory.openSession()) {
             String sql = "from " + User.class.getSimpleName();
@@ -39,7 +39,7 @@ public class UsersDAO_Hibernate implements UsersDAO {
     }
 
     @Override
-    public User user(long id) {
+    public User getUserById(long id) {
         User user = null;
         try {
             Session session = sessionFactory.openSession();
@@ -53,7 +53,7 @@ public class UsersDAO_Hibernate implements UsersDAO {
     }
 
     @Override
-    public long insert(User user) {
+    public long insertUser(User user) {
 
         try {
             Session session = sessionFactory.openSession();
@@ -69,7 +69,7 @@ public class UsersDAO_Hibernate implements UsersDAO {
     }
 
     @Override
-    public void edit(User user) {
+    public void editUser(User user) {
         Transaction transaction;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
@@ -81,7 +81,7 @@ public class UsersDAO_Hibernate implements UsersDAO {
     }
 
     @Override
-    public void delete(long id) {
+    public void deleteUserById(long id) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             CriteriaBuilder criteriaBuilder = sessionFactory.getCriteriaBuilder();

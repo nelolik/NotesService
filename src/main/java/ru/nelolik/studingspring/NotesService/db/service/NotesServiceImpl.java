@@ -2,12 +2,13 @@ package ru.nelolik.studingspring.NotesService.db.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.nelolik.studingspring.NotesService.db.dao.NotesDAO;
 import ru.nelolik.studingspring.NotesService.db.dataset.Note;
 
 import java.util.List;
 
-@Component
+@Service
 public class NotesServiceImpl implements NotesService{
 
     private NotesDAO notesDAO;
@@ -18,7 +19,7 @@ public class NotesServiceImpl implements NotesService{
     }
 
     @Override
-    public List<Note> index() {
+    public List<Note> getAllNotes() {
         return notesDAO.getAllNotes();
     }
 
@@ -39,12 +40,12 @@ public class NotesServiceImpl implements NotesService{
 
 
     @Override
-    public void removeUserNotes(long userId) {
-        notesDAO.removeUserNotes(userId);
+    public void removeNotesByUserId(long userId) {
+        notesDAO.removeNotesByUserId(userId);
     }
 
     @Override
     public void removeNote(long id) {
-        notesDAO.removeNote(id);
+        notesDAO.removeNoteByNoteId(id);
     }
 }

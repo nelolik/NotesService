@@ -42,7 +42,7 @@ public class UserDaoTest {
         long lastId = 0;
         for (User user :
                 users) {
-            lastId = usersDao.insert(user);
+            lastId = usersDao.insertUser(user);
         }
         Assertions.assertEquals(users.size(), lastId,
                 "Count of inserted values is not equal to users size");
@@ -52,7 +52,7 @@ public class UserDaoTest {
     public void indexTest() {
         clearDb();
         insertUsers();
-        List<User> usersFromDb = usersDao.index();
+        List<User> usersFromDb = usersDao.getAllUsers();
         boolean sizeEqual = users.size() == usersFromDb.size();
         Assertions.assertTrue(sizeEqual, "Count of written and read records differs");
         boolean elementsAreEqual = true;
@@ -70,9 +70,9 @@ public class UserDaoTest {
 
     @Test
     public void readUserTest() {
-        User userFromDb = usersDao.index().get(0);
+        User userFromDb = usersDao.getAllUsers().get(0);
         if (userFromDb != null) {
-            User user = usersDao.user(userFromDb.getId());
+            User user = usersDao.getUserById(userFromDb.getId());
             Assertions.assertTrue(user.equals(userFromDb), "Users with the same id are not equal.");
         } else {
             Assertions.assertEquals(true, false, "Empty index");
@@ -81,11 +81,11 @@ public class UserDaoTest {
 
     @Test
     public void testEdit() {
-        User userFromDb = usersDao.index().get(1);
+        User userFromDb = usersDao.getAllUsers().get(1);
         String oldName = userFromDb.getName();
         userFromDb.setName("New name");
-        usersDao.edit(userFromDb);
-        User newUser = usersDao.user(userFromDb.getId());
+        usersDao.editUser(userFromDb);
+        User newUser = usersDao.getUserById(userFromDb.getId());
         Assertions.assertTrue(newUser.equals(userFromDb), "Edited name is not the same like new one. Old name: "
                 + oldName + " New name: " + newUser.getName());
     }
@@ -93,9 +93,9 @@ public class UserDaoTest {
     @Test
     public void testDelete() {
         insertUsers();
-        User userFromDb = usersDao.index().get(1);
-        usersDao.delete(userFromDb.getId());
-        List<User> allUsers = usersDao.index();
+        User userFromDb = usersDao.getAllUsers().get(1);
+        usersDao.deleteUserById(userFromDb.getId());
+        List<User> allUsers = usersDao.getAllUsers();
         boolean deleted = true;
         for (User u :
                 allUsers) {
@@ -115,8 +115,8 @@ public class UserDaoTest {
         long oldId = 1;
         newUser.setId(oldId);
         newUser.setName("Autoname");
-        usersDao.insert(newUser);
-        List<User> result = usersDao.index();
+        usersDao.insertUser(newUser);
+        List<User> result = usersDao.getAllUsers();
         boolean changed = true;
         for (User u :
                 result) {
@@ -132,15 +132,15 @@ public class UserDaoTest {
     private void insertUsers() {
         for (User user :
                 users) {
-            usersDao.insert(user);
+            usersDao.insertUser(user);
         }
     }
 
     private void clearDb() {
-        List<User> allUsers = usersDao.index();
+        List<User> allUsers = usersDao.getAllUsers();
         for (User u :
                 allUsers) {
-            usersDao.delete(u.getId());
+            usersDao.deleteUserById(u.getId());
         }
     }
 

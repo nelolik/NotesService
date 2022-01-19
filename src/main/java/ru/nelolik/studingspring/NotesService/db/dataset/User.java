@@ -11,6 +11,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class User {
     @Id
     @SequenceGenerator(name = "users_id", sequenceName = "user_id_sequence", allocationSize = 1)
@@ -20,9 +21,6 @@ public class User {
 
     @Column(name = "name")
     private String name;
-
-    public User() {
-    }
 
     @Override
     public boolean equals(Object o) {

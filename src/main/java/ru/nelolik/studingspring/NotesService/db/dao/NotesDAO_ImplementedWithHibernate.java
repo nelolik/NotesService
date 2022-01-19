@@ -1,5 +1,6 @@
 package ru.nelolik.studingspring.NotesService.db.dao;
 
+import lombok.NoArgsConstructor;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -16,16 +17,14 @@ import java.util.List;
 
 @Component
 @Repository
-public class NotesDAO_Hibernate implements NotesDAO{
+@NoArgsConstructor
+public class NotesDAO_ImplementedWithHibernate implements NotesDAO{
 
     private SessionFactory sessionFactory;
 
     @Autowired
-    public NotesDAO_Hibernate(SessionFactory sessionFactory) {
+    public NotesDAO_ImplementedWithHibernate(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
-    }
-
-    public NotesDAO_Hibernate() {
     }
 
     @Override
@@ -87,7 +86,7 @@ public class NotesDAO_Hibernate implements NotesDAO{
     }
 
     @Override
-    public void removeNote(long noteId) {
+    public void removeNoteByNoteId(long noteId) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
@@ -102,7 +101,7 @@ public class NotesDAO_Hibernate implements NotesDAO{
     }
 
     @Override
-    public void removeUserNotes(long userId) {
+    public void removeNotesByUserId(long userId) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();

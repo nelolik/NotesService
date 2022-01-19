@@ -7,15 +7,11 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import ru.nelolik.studingspring.NotesService.db.dao.NotesDAO;
-import ru.nelolik.studingspring.NotesService.db.dao.NotesDAO_Hibernate;
-import ru.nelolik.studingspring.NotesService.db.dao.UsersDAO_Hibernate;
+import ru.nelolik.studingspring.NotesService.db.dao.NotesDAO_ImplementedWithHibernate;
+import ru.nelolik.studingspring.NotesService.db.dao.UsersDAO_ImplementedWithHibernate;
 import ru.nelolik.studingspring.NotesService.db.dao.UsersDAO;
 import ru.nelolik.studingspring.NotesService.db.dataset.Note;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
-import ru.nelolik.studingspring.NotesService.db.service.NotesService;
-import ru.nelolik.studingspring.NotesService.db.service.NotesServiceImpl;
-import ru.nelolik.studingspring.NotesService.db.service.UserServiceImpl;
-import ru.nelolik.studingspring.NotesService.db.service.UsersService;
 
 import static org.mockito.Mockito.mock;
 
@@ -25,12 +21,12 @@ public class TestConfig {
 
     @Bean
     public UsersDAO usersDao() {
-        return new UsersDAO_Hibernate(createSessionFactory(getH2Configuration()));
+        return new UsersDAO_ImplementedWithHibernate(createSessionFactory(getH2Configuration()));
     }
 
     @Bean
     public NotesDAO notesDAO() {
-        return new NotesDAO_Hibernate(createSessionFactory(getH2Configuration()));
+        return new NotesDAO_ImplementedWithHibernate(createSessionFactory(getH2Configuration()));
     }
 
     public org.hibernate.cfg.Configuration getH2Configuration() {

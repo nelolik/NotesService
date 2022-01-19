@@ -30,27 +30,27 @@ public class UsersController {
     }
 
     @GetMapping()
-    public String index(Model model) {
-        List<User> users = usersService.index();
+    public String getAllUsers(Model model) {
+        List<User> users = usersService.getAllUsers();
         model.addAttribute("users", users);
         return "users/index";
     }
 
     @GetMapping("/new")
     public String addNewUser(@ModelAttribute UserInput input) {
-        usersService.insert(new User(0L, input.getInput()));
+        usersService.insertUser(new User(0L, input.getInput()));
         return "redirect:/users";
     }
 
     @GetMapping("/manage")
     public String manageUsers(Model model) {
-        List<User> users = usersService.index();
+        List<User> users = usersService.getAllUsers();
         model.addAttribute("users", users);
-//        model.addAttribute("user", new User(1L, "User"));
         System.out.println("We are in get controller /manage");
         return "users/manage";
     }
 
+    //TODO: divide to 2 independent methods
     @PostMapping("/manage")
     public String deleteUser(User user, HttpServletRequest request) {
         String method = request.getParameter("method");
@@ -59,18 +59,18 @@ public class UsersController {
             return "redirect:/users/manage";
         }
         if (method.equals("edit") && id != null && user.getName() != null) {
-            usersService.edit(new User(Long.valueOf(id), user.getName()));
+            usersService.editUser(new User(Long.valueOf(id), user.getName()));
         } else if (method.equals("delete") && id != null) {
             long userId = Long.valueOf(id);
-            usersService.delete(userId);
-            notesService.removeUserNotes(userId);
+            usersService.removeUserById(userId);
+            notesService.removeNotesByUserId(userId);
         }
         return "redirect:/users/manage";
     }
 
     @GetMapping("/{id}")
     public String showUser(@PathVariable("id") long id, Model model) {
-        User user = usersService.user(id);
+        User user = usersService.getUserById(id);
         List<Note> notes = notesService.getNotesByUserId(id);
         if (user == null) {
             user = new User();
@@ -91,7 +91,7 @@ public class UsersController {
         if (!bindingResult.hasErrors()) {
             Note note = new Note(0L, id, input.getInput());
             notesService.addNote(note);
-        } else{
+        } else {
             System.out.println("Note object is null");
         }
         return "redirect:/users/" + id;
@@ -99,7 +99,7 @@ public class UsersController {
 
     @GetMapping("{userId}/{noteId}")
     public String removeUsersNote(@PathVariable("userId") long userId,
-                                    @PathVariable("noteId") long noteId) {
+                                  @PathVariable("noteId") long noteId) {
         notesService.removeNote(noteId);
         return "redirect:/users/" + userId;
     }

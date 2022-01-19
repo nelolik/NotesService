@@ -2,13 +2,14 @@ package ru.nelolik.studingspring.NotesService.db.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.nelolik.studingspring.NotesService.db.dao.UsersDAO;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
 
 import java.util.List;
 
 
-@Component
+@Service
 public class UserServiceImpl implements UsersService{
 
     private UsersDAO usersDao;
@@ -19,27 +20,27 @@ public class UserServiceImpl implements UsersService{
     }
 
     @Override
-    public List<User> index() {
-        return usersDao.index();
+    public List<User> getAllUsers() {
+        return usersDao.getAllUsers();
     }
 
     @Override
-    public User user(long id) {
-        return usersDao.user(id);
+    public User getUserById(long id) {
+        return usersDao.getUserById(id);
     }
 
     @Override
-    public long insert(User user) {
-        return usersDao.insert(user);
+    public long insertUser(User user) {
+        return usersDao.insertUser(user);
     }
 
     @Override
-    public void edit(User user) {
-        usersDao.edit(user);
+    public void editUser(User user) {
+        usersDao.editUser(user);
     }
 
     @Override
-    public void delete(long id) {
-        usersDao.delete(id);
+    public void removeUserById(long id) {
+        usersDao.deleteUserById(id);
     }
 }

@@ -4,46 +4,40 @@ package ru.nelolik.studingspring.NotesService.config;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.service.ServiceRegistry;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import ru.nelolik.studingspring.NotesService.db.dataset.Note;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
-
-import javax.annotation.Resources;
 
 @Configuration
 @ComponentScan("ru.nelolik.studingspring.NotesService")
 @PropertySource("classpath:application.properties")
 public class SpringConfig {
 
-    private ApplicationContext context; //TODO get rid of
+    @Autowired
     private Environment environment;
 
     @Bean
-    public SpringResourceTemplateResolver templateResolver() {
+    public SpringTemplateEngine templateEngine(ApplicationContext context) {
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
         templateResolver.setApplicationContext(context);
         templateResolver.setPrefix("/WEB-INF/views/");
         templateResolver.setSuffix(".html");
-        return templateResolver;
-    }
-
-    @Bean
-    public SpringTemplateEngine templateEngine() {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-        templateEngine.setTemplateResolver(templateResolver());
+        templateEngine.setTemplateResolver(templateResolver);
         templateEngine.setEnableSpringELCompiler(true);
         return templateEngine;
     }
 
-    public org.hibernate.cfg.Configuration getHibernateConfig() {
+    @Bean
+    public org.hibernate.cfg.Configuration hibernateConfig() {
         org.hibernate.cfg.Configuration configuration = new org.hibernate.cfg.Configuration();
         configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(Note.class);
@@ -58,8 +52,7 @@ public class SpringConfig {
     }
 
     @Bean
-    public SessionFactory createSessionFactory() {
-        org.hibernate.cfg.Configuration configuration = getHibernateConfig();
+    public SessionFactory createSessionFactory(org.hibernate.cfg.Configuration configuration) {
         StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder();
         builder.applySettings(configuration.getProperties());
         ServiceRegistry serviceRegistry = builder.build();

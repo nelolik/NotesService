@@ -52,7 +52,7 @@ public class NoteDaoTest {
     public void removeTest() {
         insertNotes();
         Note noteFromDb = notesDAO.getAllNotes().get(1);
-        notesDAO.removeNote(noteFromDb.getId());
+        notesDAO.removeNoteByNoteId(noteFromDb.getId());
         List<Note> restNotes = notesDAO.getAllNotes();
         boolean removed = true;
         for (Note n :
@@ -99,7 +99,7 @@ public class NoteDaoTest {
         insertNotes();
         List<Note> user1Notes = notesDAO.getNotesByUserId(1);
         Assertions.assertTrue(user1Notes.size() > 0, "Db doesn`t contains notes for userId = 1.");
-        notesDAO.removeUserNotes(1);
+        notesDAO.removeNotesByUserId(1);
         List<Note> removedNotes = notesDAO.getNotesByUserId(1);
         Assertions.assertEquals(0, removedNotes.size(), "Notes od user with userId = 1 was not removed.");
         clearDb();
@@ -116,7 +116,7 @@ public class NoteDaoTest {
         List<Note> notes = notesDAO.getAllNotes();
         for (Note n :
                 notes) {
-            notesDAO.removeNote(n.getId());
+            notesDAO.removeNoteByNoteId(n.getId());
         }
     }
 }
