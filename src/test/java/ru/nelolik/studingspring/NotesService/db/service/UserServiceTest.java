@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 
-public class UserServiceTest {
+class UserServiceTest {
     @Mock
     private UsersDAO usersDAO;
 
@@ -29,32 +29,32 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getUserByIdTest() {
+    void getUserByIdTest() {
         when(usersDAO.getUserById(USER_ID)).thenReturn(USER);
         User u = usersService.getUserById(USER_ID);
         Assertions.assertEquals(USER, u, "Mocked user and returned user ane not equal.");
     }
 
     @Test
-    public void insertUserTest() {
+    void insertUserTest() {
         usersService.insertUser(USER);
         verify(usersDAO, atLeastOnce()).insertUser(eq(USER));
     }
 
     @Test
-    public void editUserTest() {
+    void editUserTest() {
         usersService.editUser(USER);
         verify(usersDAO, atLeastOnce()).editUser(eq(USER));
     }
 
     @Test
-    public void removeUserByIdTest() {
+    void removeUserByIdTest() {
         usersService.removeUserById(USER_ID);
         verify(usersDAO,atLeastOnce()).deleteUserById(eq(USER_ID));
     }
 
     @Test
-    public void getAllUsersTest() {
+    void getAllUsersTest() {
         when(usersDAO.getAllUsers()).thenReturn(USER_LIST);
         List<User> result = usersService.getAllUsers();
         Assertions.assertEquals(USER_LIST, result, "Method index returned wrong result");

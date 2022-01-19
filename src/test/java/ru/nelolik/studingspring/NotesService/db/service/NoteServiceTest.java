@@ -17,7 +17,7 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class NoteServiceTest {
+class NoteServiceTest {
 
     @MockBean
     private NotesDAO notesDAO;
@@ -42,7 +42,7 @@ public class NoteServiceTest {
 
 
     @Test
-    public void getAllNotesTest() {
+    void getAllNotesTest() {
         when(notesDAO.getAllNotes()).thenReturn(NOTES);
         List<Note> result = notesService.getAllNotes();
         boolean allElementsAreEqual = result.size() == NOTES.size();
@@ -57,34 +57,34 @@ public class NoteServiceTest {
     }
 
     @Test
-    public void getNotesByUserIdTest() {
+    void getNotesByUserIdTest() {
         when(notesDAO.getNotesByUserId(USER_ID1)).thenReturn(NOTES_USER1);
         List<Note> result = notesService.getNotesByUserId(USER_ID1);
         Assertions.assertEquals(NOTES_USER1, result);
     }
 
     @Test
-    public void getNoteByIdTest() {
+    void getNoteByIdTest() {
         when(notesDAO.getOneNote(NOTE_ID)).thenReturn(NOTE1);
         Note result = notesService.getNoteById(NOTE_ID);
         Assertions.assertEquals(NOTE1, result);
     }
 
     @Test
-    public void addNoteTest() {
+    void addNoteTest() {
         when(notesDAO.addNote(NOTE1)).thenReturn(NOTE_ID);
         long result = notesService.addNote(NOTE1);
         Assertions.assertEquals(NOTE_ID, result);
     }
 
     @Test
-    public void removeNotesByUserIdTest() {
+    void removeNotesByUserIdTest() {
         notesService.removeNotesByUserId(USER_ID1);
         verify(notesDAO, atLeastOnce()).removeNotesByUserId(eq(USER_ID1));
     }
 
     @Test
-    public void removeNote() {
+    void removeNote() {
         notesService.removeNote(NOTE_ID);
         verify(notesDAO, atLeastOnce()).removeNoteByNoteId(eq(NOTE_ID));
     }

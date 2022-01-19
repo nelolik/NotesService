@@ -5,15 +5,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import ru.nelolik.studingspring.NotesService.config.SpringConfig;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -66,12 +67,28 @@ public class UserControllerTest {
     @Test
     public void showUserTest() throws Exception {
         int id = 1;
-        mockMvc.perform(get("/users/{id}", 3L)).
+        mockMvc.perform(get("/users/{id}", id)).
                 andExpect(model().attributeExists("user")).
                 andExpect(model().attributeExists("notes")).
                 andExpect(status().isOk()).
                 andExpect(view().name("users/user"));
     }
 
+    @Test
+    public void showUserJsonTest() throws Exception {
+        int id = 1;
+        mockMvc.perform(get("/users/{id}/json", id)).
+                andExpect(content().contentType(MediaType.APPLICATION_JSON)).
+                andExpect(content().string(containsString("userId"))).
+                andExpect(content().string(containsString("userName"))).
+                andExpect(content().string(containsString("notes")));
+    }
+
+    @Test
+    public void getAllUsersJsonTest() throws Exception {
+        mockMvc.perform(get("/users")).
+                andExpect(content().contentType(MediaType.APPLICATION_JSON)).
+                andExpect(content().string(containsString("users")));
+    }
 
 }
