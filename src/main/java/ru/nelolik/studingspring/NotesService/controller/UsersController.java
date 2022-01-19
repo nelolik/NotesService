@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.boot.configurationprocessor.json.JSONStringer;
+import org.springframework.data.annotation.AccessType;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -39,11 +42,19 @@ public class UsersController {
         return "users/index";
     }
 
-    @GetMapping("/json")
-    @ResponseBody
+    @GetMapping(value = "/json", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody()
     public String getAllUsersJson() throws JSONException {
         List<User> users = usersService.getAllUsers();
-        JSONArray jsonArray = new JSONArray(users);
+        List<String> usersString = users.stream().map(u -> {
+            try {
+                return new JSONObject().put("userId", u.getId()).put("userName", u.getName()).toString();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return "error";
+        }).toList();
+        JSONArray jsonArray = new JSONArray(usersString);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("users", jsonArray);
         return jsonObject.toString(4);
@@ -59,7 +70,7 @@ public class UsersController {
     public String manageUsers(Model model) {
         List<User> users = usersService.getAllUsers();
         model.addAttribute("users", users);
-        System.out.println("We are in get controller /manage");
+        System.out.println("We are in get controller /manage");//TODO change to Log4j
         return "users/manage";
     }
 
@@ -96,18 +107,27 @@ public class UsersController {
         return "users/user";
     }
 
-    @GetMapping("{id}/json")
+    @GetMapping(value = "{id}/json", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String showUserJson(@PathVariable("id") long id) throws JSONException {
         User user = usersService.getUserById(id);
         List<Note> notes = notesService.getNotesByUserId(id);
-
+        List<String> convertedNotes = notes.stream().map(n -> {
+                    try {
+                        return new JSONObject().put("noteId", n.getId())
+                                .put("userId", n.getUserId())
+                                .put("text", n.getRecord()).toString();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    return "Ups";
+                }).toList();
         JSONArray notesJson = new JSONArray(notes);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("userId", user.getId());
         jsonObject.put("userName", user.getName());
-        jsonObject.put("notes", notes);
-        return jsonObject.toString(4);
+        jsonObject.put("notes", convertedNotes);
+        return jsonObject.toString();
     }
 
 
