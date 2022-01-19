@@ -2,6 +2,9 @@ package ru.nelolik.studingspring.NotesService.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONArray;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -34,6 +37,16 @@ public class UsersController {
         List<User> users = usersService.getAllUsers();
         model.addAttribute("users", users);
         return "users/index";
+    }
+
+    @GetMapping("/json")
+    @ResponseBody
+    public String getAllUsersJson() throws JSONException {
+        List<User> users = usersService.getAllUsers();
+        JSONArray jsonArray = new JSONArray(users);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("users", jsonArray);
+        return jsonObject.toString(4);
     }
 
     @GetMapping("/new")
@@ -81,6 +94,20 @@ public class UsersController {
         model.addAttribute("user", user);
         model.addAttribute("notes", notes);
         return "users/user";
+    }
+
+    @GetMapping("{id}/json")
+    @ResponseBody
+    public String showUserJson(@PathVariable("id") long id) throws JSONException {
+        User user = usersService.getUserById(id);
+        List<Note> notes = notesService.getNotesByUserId(id);
+
+        JSONArray notesJson = new JSONArray(notes);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userId", user.getId());
+        jsonObject.put("userName", user.getName());
+        jsonObject.put("notes", notes);
+        return jsonObject.toString(4);
     }
 
 
