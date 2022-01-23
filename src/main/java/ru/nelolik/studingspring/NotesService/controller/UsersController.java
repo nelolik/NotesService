@@ -1,12 +1,11 @@
 package ru.nelolik.studingspring.NotesService.controller;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
-import org.springframework.boot.configurationprocessor.json.JSONStringer;
-import org.springframework.data.annotation.AccessType;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequestMapping("/users")
 public class UsersController {
@@ -39,10 +39,11 @@ public class UsersController {
     public String getAllUsers(Model model) {
         List<User> users = usersService.getAllUsers();
         model.addAttribute("users", users);
+        log.debug("Request GET to address /users. Method getAllUsers()");
         return "users/index";
     }
 
-    @GetMapping(value = "/json", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/json", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody()
     public String getAllUsersJson() throws JSONException {
         List<User> users = usersService.getAllUsers();
@@ -50,6 +51,8 @@ public class UsersController {
             try {
                 return new JSONObject().put("userId", u.getId()).put("userName", u.getName()).toString();
             } catch (JSONException e) {
+                log.error("Request GET to /users/json. Error while making JSONObject with userId={}, userName={}.",
+                        u.getId(), u.getName());
                 e.printStackTrace();
             }
             return "error";
@@ -57,12 +60,14 @@ public class UsersController {
         JSONArray jsonArray = new JSONArray(usersString);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("users", jsonArray);
-        return jsonObject.toString(4);
+        log.debug("Request GET to /users/json. Method getAllUsersJson().");
+        return jsonObject.toString();
     }
 
     @GetMapping("/new")
     public String addNewUser(@ModelAttribute UserInput input) {
         usersService.insertUser(new User(0L, input.getInput()));
+        log.debug("Request GET to /users/new. Method addNewUser(). New username: {}", input.getInput());
         return "redirect:/users";
     }
 
@@ -70,7 +75,7 @@ public class UsersController {
     public String manageUsers(Model model) {
         List<User> users = usersService.getAllUsers();
         model.addAttribute("users", users);
-        System.out.println("We are in get controller /manage");//TODO change to Log4j
+        log.debug("Request GET to /users/manage. Method manageUsers().");
         return "users/manage";
     }
 
@@ -80,14 +85,19 @@ public class UsersController {
         String method = request.getParameter("method");
         String id = request.getParameter("id");
         if (method == null) {
+            log.warn("Request POST to /users/manage. Method manageUsers(). Required method is null");
             return "redirect:/users/manage";
         }
         if (method.equals("edit") && id != null && user.getName() != null) {
             usersService.editUser(new User(Long.valueOf(id), user.getName()));
+            log.debug("Request POST to /users/manage. Method manageUsers(). Edited user with id={}, name={}",
+                    id, user.getName());
         } else if (method.equals("delete") && id != null) {
             long userId = Long.valueOf(id);
             usersService.removeUserById(userId);
             notesService.removeNotesByUserId(userId);
+            log.debug("Request POST to /users/manage. Method manageUsers(). Removed user and his notes with userId={}",
+                    userId);
         }
         return "redirect:/users/manage";
     }
@@ -104,10 +114,11 @@ public class UsersController {
         }
         model.addAttribute("user", user);
         model.addAttribute("notes", notes);
+        log.debug("Request GET to /users/{}. Method showUser()", id);
         return "users/user";
     }
 
-    @GetMapping(value = "{id}/json", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "{id}/json", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
     public String showUserJson(@PathVariable("id") long id) throws JSONException {
         User user = usersService.getUserById(id);
@@ -122,11 +133,12 @@ public class UsersController {
                     }
                     return "Ups";
                 }).toList();
-        JSONArray notesJson = new JSONArray(notes);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("userId", user.getId());
         jsonObject.put("userName", user.getName());
         jsonObject.put("notes", convertedNotes);
+        log.debug("Request GET to /users/{}/json. Method showUserJson. userId={}, userName={}, notes: {}",
+                id, user.getId(), user.getName(), convertedNotes);
         return jsonObject.toString();
     }
 
@@ -141,6 +153,7 @@ public class UsersController {
         } else {
             System.out.println("Note object is null");
         }
+        log.debug("Request POST to /users/{}. Method addUserNote()", id);
         return "redirect:/users/" + id;
     }
 
@@ -148,6 +161,7 @@ public class UsersController {
     public String removeUsersNote(@PathVariable("userId") long userId,
                                   @PathVariable("noteId") long noteId) {
         notesService.removeNote(noteId);
+        log.debug("Request GET to /users/{}/{}. Method removeUsersNote().", userId, noteId);
         return "redirect:/users/" + userId;
     }
 
