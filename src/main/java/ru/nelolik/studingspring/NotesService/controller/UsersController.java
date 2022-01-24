@@ -79,30 +79,37 @@ public class UsersController {
         return "users/manage";
     }
 
-    //TODO: divide to 2 independent methods
-    @PostMapping("/manage")
+    @PostMapping("/manage/delete")
     public String deleteUser(User user, HttpServletRequest request) {
-        String method = request.getParameter("method");
         String id = request.getParameter("id");
-        if (method == null) {
-            log.warn("Request POST to /users/manage. Method manageUsers(). Required method is null");
-            return "redirect:/users/manage";
-        }
-        if (method.equals("edit") && id != null && user.getName() != null) {
-            usersService.editUser(new User(Long.valueOf(id), user.getName()));
-            log.debug("Request POST to /users/manage. Method manageUsers(). Edited user with id={}, name={}",
-                    id, user.getName());
-        } else if (method.equals("delete") && id != null) {
+        if (id != null) {
             long userId = Long.valueOf(id);
             usersService.removeUserById(userId);
             notesService.removeNotesByUserId(userId);
-            log.debug("Request POST to /users/manage. Method manageUsers(). Removed user and his notes with userId={}",
+            log.debug("Request POST to /users/manage/delete. Method deleteUser(). Removed user and his notes with userId={}",
                     userId);
+        } else {
+            log.debug("Request POST to /users/manage/delete. Method deleteUser(). User id is null");
         }
         return "redirect:/users/manage";
     }
 
-    @GetMapping("/{id}")
+    @PostMapping("manage/edit")
+    public String editUser(User user, HttpServletRequest request) {
+        String id = request.getParameter("id");
+        if (id != null && user.getName() != null) {
+            usersService.editUser(new User(Long.valueOf(id), user.getName()));
+            log.debug("Request POST to /users/manage/edit. Method manageUsers(). Edited user with id={}, name={}",
+                    id, user.getName());
+        } else {
+            log.debug("Request POST to /users/manage/edit. Method manageUsers(). User`s id or name is null: id={}, name={}",
+                    id, user.getName());
+        }
+        return "redirect:/users/manage";
+    }
+
+
+        @GetMapping("/{id}")
     public String showUser(@PathVariable("id") long id, Model model) {
         User user = usersService.getUserById(id);
         List<Note> notes = notesService.getNotesByUserId(id);

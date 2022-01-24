@@ -47,7 +47,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void annNewUserShouldRedirect() throws Exception {
+    public void addNewUserShouldRedirect() throws Exception {
         mockMvc.perform(get("/users/new")).
                 andExpect(status().is3xxRedirection()).
                 andExpect(redirectedUrl("/users"));
@@ -63,7 +63,14 @@ public class UserControllerTest {
 
     @Test
     public void deleteUserShouldRedirect() throws Exception {
-        mockMvc.perform(post("/users/manage")).
+        mockMvc.perform(post("/users/manage/delete")).
+                andExpect(status().is3xxRedirection()).
+                andExpect(redirectedUrl("/users/manage"));
+    }
+
+    @Test
+    public void editUserTestShouldRedirect() throws Exception {
+        mockMvc.perform(post("/users/manage/edit")).
                 andExpect(status().is3xxRedirection()).
                 andExpect(redirectedUrl("/users/manage"));
     }
