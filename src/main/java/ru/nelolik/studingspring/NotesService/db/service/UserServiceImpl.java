@@ -30,6 +30,11 @@ public class UserServiceImpl implements UsersService{
     }
 
     @Override
+    public User getUserByName(String name) {
+        return usersDao.getUserByName(name);
+    }
+
+    @Override
     public long insertUser(User user) {
         return usersDao.insertUser(user);
     }

@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.nelolik.studingspring.NotesService.db.dataset.Note;
+import ru.nelolik.studingspring.NotesService.db.dataset.Role;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
 import ru.nelolik.studingspring.NotesService.db.service.NotesService;
 import ru.nelolik.studingspring.NotesService.db.service.UsersService;
@@ -19,6 +20,8 @@ import ru.nelolik.studingspring.NotesService.model.UserInput;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 @Slf4j
@@ -66,7 +69,7 @@ public class UsersController {
 
     @GetMapping("/new")
     public String addNewUser(@ModelAttribute UserInput input) {
-        usersService.insertUser(new User(0L, input.getInput()));
+        usersService.insertUser(new User(0L, input.getInput(), "", Collections.singleton(Role.USER)));
         log.debug("Request GET to /users/new. Method addNewUser(). New username: {}", input.getInput());
         return "redirect:/users";
     }
@@ -98,7 +101,8 @@ public class UsersController {
     public String editUser(User user, HttpServletRequest request) {
         String id = request.getParameter("id");
         if (id != null && user.getName() != null) {
-            usersService.editUser(new User(Long.valueOf(id), user.getName()));
+            usersService.editUser(new User(Long.valueOf(id), user.getName(),
+                    "", Collections.singleton(Role.USER)));
             log.debug("Request POST to /users/manage/edit. Method manageUsers(). Edited user with id={}, name={}",
                     id, user.getName());
         } else {
@@ -171,6 +175,18 @@ public class UsersController {
         log.debug("Request GET to /users/{}/{}. Method removeUsersNote().", userId, noteId);
         return "redirect:/users/" + userId;
     }
+
+//    @GetMapping("/login")
+//    public String login() {
+//        log.debug("Request GET to /users/login. Method login().");
+//        return "users/login";
+//    }
+//
+//    @PostMapping("/login")
+//    public String loginPost() {
+//        log.debug("Request GET to /users/login. Method login().");
+//        return "redirect:/users";
+//    }
 
     @ModelAttribute
     public void addUserInputAttribute(Model model) {

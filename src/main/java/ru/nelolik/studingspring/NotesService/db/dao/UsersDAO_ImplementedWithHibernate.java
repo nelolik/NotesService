@@ -53,6 +53,19 @@ public class UsersDAO_ImplementedWithHibernate implements UsersDAO {
     }
 
     @Override
+    public User getUserByName(String name) {
+        User user = null;
+        try {
+            Session session = sessionFactory.openSession();
+            user = session.get(User.class, name);
+            session.close();
+        } catch (HibernateException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+    @Override
     public long insertUser(User user) {
 
         try {

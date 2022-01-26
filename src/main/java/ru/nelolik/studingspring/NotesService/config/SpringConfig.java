@@ -11,6 +11,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import ru.nelolik.studingspring.NotesService.db.dataset.Note;
@@ -19,7 +21,7 @@ import ru.nelolik.studingspring.NotesService.db.dataset.User;
 @Configuration
 @ComponentScan("ru.nelolik.studingspring.NotesService")
 @PropertySource("classpath:application.properties")
-public class SpringConfig {
+public class SpringConfig implements WebMvcConfigurer {
 
     @Autowired
     private Environment environment;
@@ -57,6 +59,11 @@ public class SpringConfig {
         builder.applySettings(configuration.getProperties());
         ServiceRegistry serviceRegistry = builder.build();
         return configuration.buildSessionFactory(serviceRegistry);
+    }
+
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/users").setViewName("users/index");
+        registry.addViewController("/users/login").setViewName("/users/login");
     }
 
 }
