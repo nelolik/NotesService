@@ -1,14 +1,13 @@
 package ru.nelolik.studingspring.NotesService.db.dao;
 
 import org.hibernate.*;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaDelete;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.List;
 
 @Component
@@ -49,6 +48,26 @@ public class UsersDAO_ImplementedWithHibernate implements UsersDAO {
             e.printStackTrace();
         }
 
+        return user;
+    }
+
+    @Override
+    public User getUserByName(String name) {
+        User user = null;
+        try {
+            Session session = sessionFactory.openSession();
+            CriteriaBuilder criteriaBuilder = sessionFactory.getCriteriaBuilder();
+            CriteriaQuery<User> criteria = criteriaBuilder.createQuery(User.class);
+            ParameterExpression<String> parameter = criteriaBuilder.parameter(String.class);
+            Root<User> root = criteria.from(User.class);
+            criteria.select(root).where(criteriaBuilder.equal(root.get("username"), parameter));
+            Query<User> query = session.createQuery(criteria);
+            query.setParameter(parameter, name);
+            user = query.uniqueResult();
+            session.close();
+        } catch (HibernateException e) {
+            e.printStackTrace();
+        }
         return user;
     }
 

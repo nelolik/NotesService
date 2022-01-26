@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.nelolik.studingspring.NotesService.db.dataset.Note;
+import ru.nelolik.studingspring.NotesService.db.dataset.Role;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
 import ru.nelolik.studingspring.NotesService.db.service.NotesService;
 import ru.nelolik.studingspring.NotesService.db.service.UsersService;
@@ -19,6 +20,7 @@ import ru.nelolik.studingspring.NotesService.model.UserInput;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -49,10 +51,10 @@ public class UsersController {
         List<User> users = usersService.getAllUsers();
         List<String> usersString = users.stream().map(u -> {
             try {
-                return new JSONObject().put("userId", u.getId()).put("userName", u.getName()).toString();
+                return new JSONObject().put("userId", u.getId()).put("userName", u.getUsername()).toString();
             } catch (JSONException e) {
                 log.error("Request GET to /users/json. Error while making JSONObject with userId={}, userName={}.",
-                        u.getId(), u.getName());
+                        u.getId(), u.getUsername());
                 e.printStackTrace();
             }
             return "error";
@@ -66,7 +68,7 @@ public class UsersController {
 
     @GetMapping("/new")
     public String addNewUser(@ModelAttribute UserInput input) {
-        usersService.insertUser(new User(0L, input.getInput()));
+        usersService.insertUser(new User(0L, input.getInput(), "", Collections.singleton(Role.USER)));
         log.debug("Request GET to /users/new. Method addNewUser(). New username: {}", input.getInput());
         return "redirect:/users";
     }
@@ -97,13 +99,14 @@ public class UsersController {
     @PostMapping("manage/edit")
     public String editUser(User user, HttpServletRequest request) {
         String id = request.getParameter("id");
-        if (id != null && user.getName() != null) {
-            usersService.editUser(new User(Long.valueOf(id), user.getName()));
+        if (id != null && user.getUsername() != null) {
+            usersService.editUser(new User(Long.valueOf(id), user.getUsername(),
+                    "", Collections.singleton(Role.USER)));
             log.debug("Request POST to /users/manage/edit. Method manageUsers(). Edited user with id={}, name={}",
-                    id, user.getName());
+                    id, user.getUsername());
         } else {
             log.debug("Request POST to /users/manage/edit. Method manageUsers(). User`s id or name is null: id={}, name={}",
-                    id, user.getName());
+                    id, user.getUsername());
         }
         return "redirect:/users/manage";
     }
@@ -142,10 +145,10 @@ public class UsersController {
                 }).toList();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("userId", user.getId());
-        jsonObject.put("userName", user.getName());
+        jsonObject.put("userName", user.getUsername());
         jsonObject.put("notes", convertedNotes);
         log.debug("Request GET to /users/{}/json. Method showUserJson. userId={}, userName={}, notes: {}",
-                id, user.getId(), user.getName(), convertedNotes);
+                id, user.getId(), user.getUsername(), convertedNotes);
         return jsonObject.toString();
     }
 

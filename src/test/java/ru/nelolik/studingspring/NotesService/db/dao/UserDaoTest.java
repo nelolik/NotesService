@@ -9,9 +9,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import ru.nelolik.studingspring.NotesService.config.TestConfig;
+import ru.nelolik.studingspring.NotesService.db.dataset.Role;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @ExtendWith(SpringExtension.class)
@@ -31,9 +33,9 @@ public class UserDaoTest {
     @BeforeAll
     public static void setup() {
         users = new ArrayList<>();
-        users.add(new User((long)1, "Aleks"));
-        users.add(new User((long)2, "Mikle"));
-        users.add(new User((long)3, "Jessika"));
+        users.add(new User((long)1, "Aleks", "password", Collections.singleton(Role.USER)));
+        users.add(new User((long)2, "Mikle", "password", Collections.singleton(Role.USER)));
+        users.add(new User((long)3, "Jessika", "password", Collections.singleton(Role.USER)));
 
     }
 
@@ -82,12 +84,12 @@ public class UserDaoTest {
     @Test
     public void testEdit() {
         User userFromDb = usersDao.getAllUsers().get(1);
-        String oldName = userFromDb.getName();
-        userFromDb.setName("New name");
+        String oldName = userFromDb.getUsername();
+        userFromDb.setUsername("New name");
         usersDao.editUser(userFromDb);
         User newUser = usersDao.getUserById(userFromDb.getId());
         Assertions.assertTrue(newUser.equals(userFromDb), "Edited name is not the same like new one. Old name: "
-                + oldName + " New name: " + newUser.getName());
+                + oldName + " New name: " + newUser.getUsername());
     }
 
     @Test
@@ -114,13 +116,13 @@ public class UserDaoTest {
         User newUser = new User();
         long oldId = 1;
         newUser.setId(oldId);
-        newUser.setName("Autoname");
+        newUser.setUsername("Autoname");
         usersDao.insertUser(newUser);
         List<User> result = usersDao.getAllUsers();
         boolean changed = true;
         for (User u :
                 result) {
-            if (u.getName().equals("Autoname") && u.getId() == oldId) {
+            if (u.getUsername().equals("Autoname") && u.getId() == oldId) {
                 changed = false;
                 break;
             }

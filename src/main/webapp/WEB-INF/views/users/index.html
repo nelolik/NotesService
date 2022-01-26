@@ -1,14 +1,18 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
     <meta charset="UTF-8">
     <title>All users</title>
 </head>
 <body>
-
+<h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="Sign Out"/>
+</form>
 <div th:each="user: ${users}">
     <a th:href="@{/users/{id}(id=${user.getId()})}"
-       th:text="${user.getName()}">user</a>
+       th:text="${user.getUsername()}">user</a>
 </div>
 <br>
 <br>

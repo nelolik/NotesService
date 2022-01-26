@@ -10,7 +10,7 @@
     <form th:method="POST"
           th:action="@{/users/manage/edit?id={id}(id=${user.getId()})}">
         <label for="userName">User name: </label>
-        <input type="text" th:value="${user.getName()}" name="name" id="userName">
+        <input type="text" th:value="${user.getUsername()}" name="name" id="userName">
         <input type="submit" value="Edit">
     </form>
     <form th:method="POST"
