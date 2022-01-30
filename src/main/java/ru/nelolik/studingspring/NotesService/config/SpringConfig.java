@@ -62,9 +62,4 @@ public class SpringConfig implements WebMvcConfigurer {
         return configuration.buildSessionFactory(serviceRegistry);
     }
 
-//    public void addViewControllers(ViewControllerRegistry registry) {
-//        registry.addViewController("/users").setViewName("users/index");
-//        registry.addViewController("/login").setViewName("login");
-//    }
-
 }
