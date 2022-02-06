@@ -33,9 +33,9 @@ public class UserDaoTest {
     @BeforeAll
     public static void setup() {
         users = new ArrayList<>();
-        users.add(new User((long)1, "Aleks", "password", Collections.singleton(Role.USER)));
-        users.add(new User((long)2, "Mikle", "password", Collections.singleton(Role.USER)));
-        users.add(new User((long)3, "Jessika", "password", Collections.singleton(Role.USER)));
+        users.add(new User((long)1, "Aleks", "password", Collections.singleton(Role.ROLE_USER)));
+        users.add(new User((long)2, "Mikle", "password", Collections.singleton(Role.ROLE_USER)));
+        users.add(new User((long)3, "Jessika", "password", Collections.singleton(Role.ROLE_USER)));
 
     }
 

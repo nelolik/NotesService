@@ -68,7 +68,7 @@ public class UsersController {
 
     @GetMapping("/new")
     public String addNewUser(@ModelAttribute UserInput input) {
-        usersService.insertUser(new User(0L, input.getInput(), "", Collections.singleton(Role.USER)));
+        usersService.insertUser(new User(0L, input.getInput(), "", Collections.singleton(Role.ROLE_USER)));
         log.debug("Request GET to /users/new. Method addNewUser(). New username: {}", input.getInput());
         return "redirect:/users";
     }
@@ -97,17 +97,25 @@ public class UsersController {
     }
 
     @PostMapping("manage/edit")
-    public String editUser(User user, HttpServletRequest request) {
-        String id = request.getParameter("id");
-        if (id != null && user.getUsername() != null) {
-            usersService.editUser(new User(Long.valueOf(id), user.getUsername(),
-                    "", Collections.singleton(Role.USER)));
-            log.debug("Request POST to /users/manage/edit. Method manageUsers(). Edited user with id={}, name={}",
-                    id, user.getUsername());
-        } else {
-            log.debug("Request POST to /users/manage/edit. Method manageUsers(). User`s id or name is null: id={}, name={}",
-                    id, user.getUsername());
+    public String editUser(HttpServletRequest request) {
+        String id_string = request.getParameter("id");
+        String name = request.getParameter("name");
+        if (id_string == null || name == null) {
+            log.debug("Request POST to /users/manage/edit. Method manageUsers(). User`s id or name is null: id ={}, name = {}",
+                    id_string, name);
+            return "redirect:/users/manage";
         }
+        Long id = Long.valueOf(id_string);
+        User user = usersService.getUserById(id);
+        if (user == null) {
+            log.debug("Request POST to /users/manage/edit. Method manageUsers(). User with id ={} is not registered",
+                    id);
+            return "redirect:/users/manage";
+        }
+        user.setUsername(name);
+        usersService.editUser(user);
+        log.debug("Request POST to /users/manage/edit. Method manageUsers(). Edited user with id={}, name={}",
+                id, name);
         return "redirect:/users/manage";
     }
 

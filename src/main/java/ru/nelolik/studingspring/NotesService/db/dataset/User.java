@@ -31,14 +31,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
-    @Column(name = "password")
-    private String password;
-
-    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
-    @Enumerated(EnumType.STRING)
-    private Set<Role> roles;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
