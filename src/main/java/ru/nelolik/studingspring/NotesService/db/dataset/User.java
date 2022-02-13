@@ -26,10 +26,8 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
-    @Enumerated(EnumType.STRING)
-    private Set<Role> roles;
+    @Transient
+    private Set<UserRole> roles;
 
     @Override
     public boolean equals(Object o) {

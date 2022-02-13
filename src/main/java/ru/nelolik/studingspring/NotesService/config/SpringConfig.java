@@ -17,6 +17,7 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import ru.nelolik.studingspring.NotesService.db.dataset.Note;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
+import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
 
 @Configuration
 @ComponentScan("ru.nelolik.studingspring.NotesService")
@@ -43,6 +44,7 @@ public class SpringConfig implements WebMvcConfigurer {
         org.hibernate.cfg.Configuration configuration = new org.hibernate.cfg.Configuration();
         configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(Note.class);
+        configuration.addAnnotatedClass(UserRole.class);
 
         configuration.setProperty("hibernate.dialect", environment.getProperty("dbConnection.dialect"));
         configuration.setProperty("hibernate.connection.driver_class", environment.getProperty("dbConnection.driver"));

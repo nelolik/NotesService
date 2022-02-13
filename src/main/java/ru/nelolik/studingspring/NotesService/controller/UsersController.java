@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.nelolik.studingspring.NotesService.db.dataset.Note;
 import ru.nelolik.studingspring.NotesService.db.dataset.Role;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
+import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
 import ru.nelolik.studingspring.NotesService.db.service.NotesService;
 import ru.nelolik.studingspring.NotesService.db.service.UsersService;
 import ru.nelolik.studingspring.NotesService.model.UserInput;
@@ -68,7 +69,8 @@ public class UsersController {
 
     @GetMapping("/new")
     public String addNewUser(@ModelAttribute UserInput input) {
-        usersService.insertUser(new User(0L, input.getInput(), "", Collections.singleton(Role.ROLE_USER)));
+        usersService.insertUser(new User(0L, input.getInput(), "",
+                Collections.singleton(new UserRole(0L, "ROLE_USER", null))));
         log.debug("Request GET to /users/new. Method addNewUser(). New username: {}", input.getInput());
         return "redirect:/users";
     }

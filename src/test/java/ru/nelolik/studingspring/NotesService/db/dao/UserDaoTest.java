@@ -11,6 +11,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import ru.nelolik.studingspring.NotesService.config.TestConfig;
 import ru.nelolik.studingspring.NotesService.db.dataset.Role;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
+import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,8 +25,8 @@ public class UserDaoTest {
     private UsersDAO usersDao;
 
     @Autowired
-    public UserDaoTest(UsersDAO usersService) {
-        this.usersDao = usersService;
+    public UserDaoTest(UsersDAO usersDAO) {
+        this.usersDao = usersDAO;
     }
 
     private static List<User> users;
@@ -33,9 +34,9 @@ public class UserDaoTest {
     @BeforeAll
     public static void setup() {
         users = new ArrayList<>();
-        users.add(new User((long)1, "Aleks", "password", Collections.singleton(Role.ROLE_USER)));
-        users.add(new User((long)2, "Mikle", "password", Collections.singleton(Role.ROLE_USER)));
-        users.add(new User((long)3, "Jessika", "password", Collections.singleton(Role.ROLE_USER)));
+        users.add(new User((long)1, "Aleks", "password", Collections.singleton(new UserRole(1L, "ROLE_USER", null))));
+        users.add(new User((long)2, "Mikle", "password", Collections.singleton(new UserRole(2L, "ROLE_USER", null))));
+        users.add(new User((long)3, "Jessika", "password", Collections.singleton(new UserRole(3L, "ROLE_USER",null))));
 
     }
 
