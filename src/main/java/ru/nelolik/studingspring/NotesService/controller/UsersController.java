@@ -70,7 +70,7 @@ public class UsersController {
     @GetMapping("/new")
     public String addNewUser(@ModelAttribute UserInput input) {
         usersService.insertUser(new User(0L, input.getInput(), "",
-                Collections.singleton(new UserRole(0L, "ROLE_USER", null))));
+                Collections.singletonList(new UserRole(0L, "ROLE_USER"))));
         log.debug("Request GET to /users/new. Method addNewUser(). New username: {}", input.getInput());
         return "redirect:/users";
     }

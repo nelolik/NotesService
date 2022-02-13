@@ -22,11 +22,11 @@ class UserServiceTest {
 
     private static long USER_ID = 1;
     private static User USER = new User(USER_ID, "User name", "p1",
-            Collections.singleton(new UserRole(USER_ID, "ROLE_USER", null)));
+            Collections.singletonList(new UserRole(USER_ID, "ROLE_USER")));
     private static User USER2 = new User(USER_ID + 1, "User name2", "p2",
-            Collections.singleton(new UserRole(USER_ID + 1, "ROLE_USER", null)));
+            Collections.singletonList(new UserRole(USER_ID + 1, "ROLE_USER")));
     private static User USER3 = new User(USER_ID + 2, "User name3", "p3",
-            Collections.singleton(new UserRole(USER_ID + 2, "ROLE_USER", null)));
+            Collections.singletonList(new UserRole(USER_ID + 2, "ROLE_USER")));
     private static List<User> USER_LIST = Arrays.asList(USER, USER2, USER3);
 
     {

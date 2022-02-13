@@ -13,13 +13,9 @@ import java.util.Set;
 public class UserRole {
     @Id
     @Column(name = "user_id", nullable = false)
-    Long user_id;
+    Long userid;
 
     @Column(name = "roles")
     String roles;
 
-//    @ManyToOne
-//    @JoinTable(name = "users", joinColumns = @JoinColumn(name = "id"))
-    @Transient
-    Set<User> users;
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
+import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
 
 import javax.persistence.criteria.*;
 import java.util.List;
@@ -17,11 +18,11 @@ public class UsersDAO_ImplementedWithHibernate implements UsersDAO {
     private SessionFactory sessionFactory;
 
     @Autowired
+    private UserRoleRepository userRoleRepository;
+
+    @Autowired
     public UsersDAO_ImplementedWithHibernate(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
-    }
-
-    public UsersDAO_ImplementedWithHibernate() {
     }
 
     @Override
@@ -30,6 +31,10 @@ public class UsersDAO_ImplementedWithHibernate implements UsersDAO {
         try (Session session = sessionFactory.openSession()) {
             String sql = "from " + User.class.getSimpleName();
             list = session.createQuery(sql).list();
+            for (User u :
+                    list) {
+                u.setRoles(userRoleRepository.findByUserid(u.getId()));
+            }
         } catch (HibernateException e) {
             e.printStackTrace();
         }
@@ -43,6 +48,9 @@ public class UsersDAO_ImplementedWithHibernate implements UsersDAO {
         try {
             Session session = sessionFactory.openSession();
             user = session.get(User.class, id);
+//            String sql = "from " + UserRole.class.getSimpleName();
+//            List<UserRole> roles = session.createQuery(sql).list();
+//            user.setRoles(roles);
             session.close();
         } catch (HibernateException e) {
             e.printStackTrace();

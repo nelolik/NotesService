@@ -35,7 +35,7 @@ public class RegistrationController {
             log.info("RegistrationController.addUser. User with name /{} already exists.", user.getUsername());
             return "registration";
         }
-        user.setRoles(Collections.singleton(new UserRole(userFromDb.getId(), "ROLE_USER", null)));
+        user.setRoles(Collections.singletonList(new UserRole(userFromDb.getId(), "ROLE_USER")));
         usersService.insertUser(user);
         log.info("RegistrationController.addUser. User with name /{} successfully added.", user.getUsername());
         return "redirect:/login";

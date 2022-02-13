@@ -1,5 +1,7 @@
 package ru.nelolik.studingspring.NotesService.db.dao;
 
+import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,10 +36,15 @@ public class UserDaoTest {
     @BeforeAll
     public static void setup() {
         users = new ArrayList<>();
-        users.add(new User((long)1, "Aleks", "password", Collections.singleton(new UserRole(1L, "ROLE_USER", null))));
-        users.add(new User((long)2, "Mikle", "password", Collections.singleton(new UserRole(2L, "ROLE_USER", null))));
-        users.add(new User((long)3, "Jessika", "password", Collections.singleton(new UserRole(3L, "ROLE_USER",null))));
+        users.add(new User((long)1, "Aleks", "password", Collections.singletonList(new UserRole(1L, "ROLE_USER"))));
+        users.add(new User((long)2, "Mikle", "password", Collections.singletonList(new UserRole(2L, "ROLE_USER"))));
+        users.add(new User((long)3, "Jessika", "password", Collections.singletonList(new UserRole(3L, "ROLE_USER"))));
 
+    }
+
+    @AfterEach
+    public void clearContext() {
+        clearDb();
     }
 
     @Test
@@ -53,11 +60,11 @@ public class UserDaoTest {
 
     @Test
     public void indexTest() {
-        clearDb();
         insertUsers();
         List<User> usersFromDb = usersDao.getAllUsers();
         boolean sizeEqual = users.size() == usersFromDb.size();
-        Assertions.assertTrue(sizeEqual, "Count of written and read records differs");
+        Assertions.assertTrue(sizeEqual, "Count of written (" + users.size() + ") and read (" +
+                usersFromDb.size() + ") records differs");
         boolean elementsAreEqual = true;
 
         if (sizeEqual) {
@@ -73,17 +80,19 @@ public class UserDaoTest {
 
     @Test
     public void readUserTest() {
+        insertUsers();
         User userFromDb = usersDao.getAllUsers().get(0);
         if (userFromDb != null) {
             User user = usersDao.getUserById(userFromDb.getId());
             Assertions.assertTrue(user.equals(userFromDb), "Users with the same id are not equal.");
         } else {
-            Assertions.assertEquals(true, false, "Empty index");
+            Assertions.assertEquals(true, false, "Empty list of users in db");
         }
     }
 
     @Test
     public void testEdit() {
+        insertUsers();
         User userFromDb = usersDao.getAllUsers().get(1);
         String oldName = userFromDb.getUsername();
         userFromDb.setUsername("New name");
@@ -108,7 +117,6 @@ public class UserDaoTest {
             }
         }
         Assertions.assertTrue(deleted, "User was not deleted from db.");
-        clearDb();
     }
 
     @Test
@@ -129,7 +137,6 @@ public class UserDaoTest {
             }
         }
         Assertions.assertTrue(changed, "Id of new record wasn`t auto incremented");
-        clearDb();
     }
 
     private void insertUsers() {
