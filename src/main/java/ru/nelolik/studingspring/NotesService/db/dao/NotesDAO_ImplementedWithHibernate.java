@@ -15,7 +15,6 @@ import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
-@Component
 @Repository
 @NoArgsConstructor
 public class NotesDAO_ImplementedWithHibernate implements NotesDAO{

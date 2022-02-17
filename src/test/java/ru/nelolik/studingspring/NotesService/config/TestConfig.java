@@ -45,6 +45,7 @@ public class TestConfig {
         return configuration;
     }
 
+    @Bean
     public static SessionFactory createSessionFactory(org.hibernate.cfg.Configuration configuration) {
         StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder();
         builder.applySettings(configuration.getProperties());
