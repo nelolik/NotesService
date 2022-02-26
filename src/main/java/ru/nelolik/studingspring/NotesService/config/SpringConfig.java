@@ -11,7 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
@@ -22,6 +22,7 @@ import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
 @Configuration
 @ComponentScan("ru.nelolik.studingspring.NotesService")
 @PropertySource("classpath:application.properties")
+@EnableJpaRepositories("ru.nelolik.studingspring.NotesService.db")
 public class SpringConfig implements WebMvcConfigurer {
 
     @Autowired

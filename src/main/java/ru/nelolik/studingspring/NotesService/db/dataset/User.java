@@ -4,6 +4,7 @@ package ru.nelolik.studingspring.NotesService.db.dataset;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -35,7 +36,8 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id.equals(user.id) && username.equals(user.username) && password.equals(user.password) && Objects.equals(roles, user.roles);
+        return id.equals(user.id) && username.equals(user.username) && password.equals(user.password)
+                  && roles.equals(user.getRoles());
     }
 
     @Override

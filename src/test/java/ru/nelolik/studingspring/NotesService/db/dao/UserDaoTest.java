@@ -1,10 +1,11 @@
 package ru.nelolik.studingspring.NotesService.db.dao;
 
+import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -16,6 +17,8 @@ import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {TestConfig.class, UserRoleDAOImplementation.class}, loader = AnnotationConfigContextLoader.class)
@@ -32,7 +35,7 @@ public class UserDaoTest {
     private static List<User> users;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         users = new ArrayList<>();
         users.add(new User((long)1, "Aleks", "password", Collections.singletonList(new UserRole(1L, "ROLE_USER"))));
         users.add(new User((long)2, "Mikle", "password", Collections.singletonList(new UserRole(2L, "ROLE_USER"))));
@@ -41,12 +44,12 @@ public class UserDaoTest {
     }
 
     @AfterEach
-    public void clearContext() {
+    void clearContext() {
         clearDb();
     }
 
     @Test
-    public void insertValuesTest() {
+    void insertValuesTest() {
         long lastId = 0;
         for (User user :
                 users) {
@@ -57,51 +60,39 @@ public class UserDaoTest {
     }
 
     @Test
-    public void indexTest() {
+    void indexTest() {
         insertUsers();
         List<User> usersFromDb = usersDao.getAllUsers();
-        boolean sizeEqual = users.size() == usersFromDb.size();
-        Assertions.assertTrue(sizeEqual, "Count of written (" + users.size() + ") and read (" +
-                usersFromDb.size() + ") records differs");
-        boolean elementsAreEqual = true;
 
-        if (sizeEqual) {
-            for (User u :
-                    users) {
-                elementsAreEqual &= usersFromDb.contains(u);
-            }
-        } else {
-            elementsAreEqual = false;
-        }
-        Assertions.assertTrue(elementsAreEqual, "Recorde list of users is not equal to written list of users");
+        assertThat(usersFromDb).isNotNull().containsExactlyInAnyOrderElementsOf(users);
     }
 
     @Test
-    public void readUserTest() {
+    void readUserTest() {
         insertUsers();
         User userFromDb = usersDao.getAllUsers().get(0);
         if (userFromDb != null) {
             User user = usersDao.getUserById(userFromDb.getId());
-            Assertions.assertTrue(user.equals(userFromDb), "Users with the same id are not equal.");
+            Assertions.assertEquals(user, userFromDb, "Users with the same id are not equal.");
         } else {
             Assertions.assertEquals(true, false, "Empty list of users in db");
         }
     }
 
     @Test
-    public void testEdit() {
+    void testEdit() {
         insertUsers();
         User userFromDb = usersDao.getAllUsers().get(1);
         String oldName = userFromDb.getUsername();
         userFromDb.setUsername("New name");
         usersDao.editUser(userFromDb);
         User newUser = usersDao.getUserById(userFromDb.getId());
-        Assertions.assertTrue(newUser.equals(userFromDb), "Edited name is not the same like new one. Old name: "
+        Assertions.assertEquals(newUser, userFromDb, "Edited name is not the same like new one. Old name: "
                 + oldName + " New name: " + newUser.getUsername());
     }
 
     @Test
-    public void testDelete() {
+    void testDelete() {
         insertUsers();
         User userFromDb = usersDao.getAllUsers().get(1);
         usersDao.deleteUserById(userFromDb.getId());
@@ -118,29 +109,30 @@ public class UserDaoTest {
     }
 
     @Test
-    public void testAutoincrement() {
+    void testAutoincrement() {
         insertUsers();
+        long maxOldId = users.stream().map(User::getId).max(Long::compareTo).orElse(-1L);
         User newUser = new User();
         long oldId = 1;
         newUser.setId(oldId);
         newUser.setUsername("Autoname");
+        newUser.setPassword("autopassword");
+        newUser.setRoles(Collections.singletonList(new UserRole(oldId, "ROLE_USER")));
         usersDao.insertUser(newUser);
         List<User> result = usersDao.getAllUsers();
-        boolean changed = true;
-        for (User u :
-                result) {
-            if (u.getUsername().equals("Autoname") && u.getId() == oldId) {
-                changed = false;
-                break;
-            }
-        }
-        Assertions.assertTrue(changed, "Id of new record wasn`t auto incremented");
+        assertThat(result).isNotNull()
+                .extracting(User::getUsername, User::getId)
+                .containsOnlyOnce(Tuple.tuple("Autoname", maxOldId + 1));
     }
 
     private void insertUsers() {
         for (User user :
                 users) {
             usersDao.insertUser(user);
+            for (UserRole r :
+                    user.getRoles()) {
+                r.setUserid(user.getId());
+            }
         }
     }
 

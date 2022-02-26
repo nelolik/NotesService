@@ -14,9 +14,11 @@ import ru.nelolik.studingspring.NotesService.db.dataset.Note;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.*;
+
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class, loader = AnnotationConfigContextLoader.class)
-public class NoteDaoTest {
+class NoteDaoTest {
 
     @Autowired
     private NotesDAO notesDAO;
@@ -24,7 +26,7 @@ public class NoteDaoTest {
     private static List<Note> notes;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         notes = new ArrayList<>();
         notes.add(new Note(1L, 1L, "Note1"));
         notes.add(new Note(2L, 1L, "Note2"));
@@ -35,7 +37,7 @@ public class NoteDaoTest {
     }
 
     @Test
-    public void  addNoteTest() {
+    void  addNoteTest() {
         clearDb();
         long lastId = 0;
         for (Note n :
@@ -49,7 +51,7 @@ public class NoteDaoTest {
     }
 
     @Test
-    public void removeTest() {
+    void removeTest() {
         insertNotes();
         Note noteFromDb = notesDAO.getAllNotes().get(1);
         notesDAO.removeNoteByNoteId(noteFromDb.getId());
@@ -67,22 +69,24 @@ public class NoteDaoTest {
     }
 
     @Test
-    public void getNoteByIdTest() {
+    void getNoteByIdTest() {
         insertNotes();
         Note firstNote = notesDAO.getOneNote(1L);
         Assertions.assertNotNull(firstNote, "Could not get Note by id 1");
     }
 
     @Test
-    public void indexTest() {
+    void indexTest() {
         clearDb();
         insertNotes();
         List<Note> notesFromDb = notesDAO.getAllNotes();
-        Assertions.assertTrue(notes.equals(notesFromDb), "Recorded and returned list are not equals.");
+        assertThat(notesFromDb).isNotNull()
+                .containsExactlyInAnyOrderElementsOf(notes);
+//        Assertions.assertTrue(notes.equals(notesFromDb), "Recorded and returned list are not equals.");
     }
 
     @Test
-    public void getAllByUserIdTest() {
+    void getAllByUserIdTest() {
         clearDb();
         insertNotes();
         List<Note> notesOfUser1 = notesDAO.getNotesByUserId(1L);
@@ -95,7 +99,7 @@ public class NoteDaoTest {
     }
 
     @Test
-    public void removeUserNotesTest() {
+    void removeUserNotesTest() {
         insertNotes();
         List<Note> user1Notes = notesDAO.getNotesByUserId(1);
         Assertions.assertTrue(user1Notes.size() > 0, "Db doesn`t contains notes for userId = 1.");

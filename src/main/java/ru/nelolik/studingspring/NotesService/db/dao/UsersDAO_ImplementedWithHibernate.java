@@ -5,6 +5,7 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
+import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
 
 import javax.persistence.criteria.*;
 import java.util.List;
@@ -81,6 +82,11 @@ public class UsersDAO_ImplementedWithHibernate implements UsersDAO {
             Session session = sessionFactory.openSession();
             Transaction transaction = session.beginTransaction();
             Long id = (Long) session.save(user);
+            List<UserRole> roles = user.getRoles();
+            for (UserRole r :
+                    roles) {
+                userRoleDAO.saveUserRole(id, r.getRoles());
+            }
             transaction.commit();
             session.close();
             return id;
