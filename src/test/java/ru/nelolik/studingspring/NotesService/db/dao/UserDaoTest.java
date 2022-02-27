@@ -76,7 +76,7 @@ public class UserDaoTest {
             User user = usersDao.getUserById(userFromDb.getId());
             Assertions.assertEquals(user, userFromDb, "Users with the same id are not equal.");
         } else {
-            Assertions.assertEquals(true, false, "Empty list of users in db");
+            Assertions.fail("Empty list of users in db");
         }
     }
 
@@ -126,12 +126,25 @@ public class UserDaoTest {
         newUser.setId(oldId);
         newUser.setUsername("Autoname");
         newUser.setPassword("autopassword");
-        newUser.setRoles(Collections.singletonList(new UserRole(oldId, "ROLE_USER")));
+        newUser.setRoles(Collections.singletonList(new UserRole(oldId, Role.ROLE_USER.name())));
         usersDao.insertUser(newUser);
         List<User> result = usersDao.getAllUsers();
         assertThat(result).isNotNull()
                 .extracting(User::getUsername, User::getId)
                 .containsOnlyOnce(Tuple.tuple("Autoname", maxOldId + 1));
+    }
+
+    @Test
+    void insertUserSetsRightUserIdInUserRole() {
+        insertUsers();
+        User newUser = new User();
+        newUser.setId(1L);
+        newUser.setUsername("New Name");
+        newUser.setPassword("NewPassword");
+        newUser.setRoles(Collections.singletonList(new UserRole(1L, Role.ROLE_USER.name())));
+        long userId = usersDao.insertUser(newUser);
+        User fromDb = usersDao.getUserById(userId);
+        Assertions.assertEquals(fromDb.getId(), fromDb.getRoles().get(0).getUserid());
     }
 
     private void insertUsers() {
