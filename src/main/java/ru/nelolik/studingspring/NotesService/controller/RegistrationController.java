@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import ru.nelolik.studingspring.NotesService.db.dataset.Role;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
 import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
 import ru.nelolik.studingspring.NotesService.db.service.UsersService;
@@ -34,7 +35,7 @@ public class RegistrationController {
             log.info("RegistrationController.addUser. User with name /{} already exists.", user.getUsername());
             return "registration";
         }
-        user.setRoles(Collections.singletonList(new UserRole(userFromDb.getId(), "ROLE_USER")));
+        user.setRoles(Collections.singletonList(new UserRole(1L, Role.ROLE_USER.name())));
         usersService.insertUser(user);
         log.info("RegistrationController.addUser. User with name /{} successfully added.", user.getUsername());
         return "redirect:/login";

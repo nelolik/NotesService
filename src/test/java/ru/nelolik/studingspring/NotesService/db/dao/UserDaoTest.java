@@ -11,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import ru.nelolik.studingspring.NotesService.config.TestConfig;
+import ru.nelolik.studingspring.NotesService.db.dataset.Role;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
 import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
 
@@ -37,9 +38,9 @@ public class UserDaoTest {
     @BeforeAll
     static void setup() {
         users = new ArrayList<>();
-        users.add(new User((long)1, "Aleks", "password", Collections.singletonList(new UserRole(1L, "ROLE_USER"))));
-        users.add(new User((long)2, "Mikle", "password", Collections.singletonList(new UserRole(2L, "ROLE_USER"))));
-        users.add(new User((long)3, "Jessika", "password", Collections.singletonList(new UserRole(3L, "ROLE_USER"))));
+        users.add(new User((long)1, "Aleks", "password", Collections.singletonList(new UserRole(1L, Role.ROLE_USER.name()))));
+        users.add(new User((long)2, "Mikle", "password", Collections.singletonList(new UserRole(2L, Role.ROLE_USER.name()))));
+        users.add(new User((long)3, "Jessika", "password", Collections.singletonList(new UserRole(3L, Role.ROLE_USER.name()))));
 
     }
 
@@ -77,6 +78,14 @@ public class UserDaoTest {
         } else {
             Assertions.assertEquals(true, false, "Empty list of users in db");
         }
+    }
+
+    @Test
+    void readNotExistingUserTest() {
+        insertUsers();
+        long maxId = usersDao.getAllUsers().stream().map(User::getId).max(Long::compareTo).orElse(1L);
+        User userFromDb = usersDao.getUserById(maxId + 10L);
+        Assertions.assertNull(userFromDb, "Db return User with not existing id.");
     }
 
     @Test

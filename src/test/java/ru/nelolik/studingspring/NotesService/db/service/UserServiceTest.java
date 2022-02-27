@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import ru.nelolik.studingspring.NotesService.db.dao.UsersDAO;
+import ru.nelolik.studingspring.NotesService.db.dataset.Role;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
 import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
 
@@ -21,11 +22,11 @@ class UserServiceTest {
 
     private static long USER_ID = 1;
     private static User USER = new User(USER_ID, "User name", "p1",
-            Collections.singletonList(new UserRole(USER_ID, "ROLE_USER")));
+            Collections.singletonList(new UserRole(USER_ID, Role.ROLE_USER.name())));
     private static User USER2 = new User(USER_ID + 1, "User name2", "p2",
-            Collections.singletonList(new UserRole(USER_ID + 1, "ROLE_USER")));
+            Collections.singletonList(new UserRole(USER_ID + 1, Role.ROLE_USER.name())));
     private static User USER3 = new User(USER_ID + 2, "User name3", "p3",
-            Collections.singletonList(new UserRole(USER_ID + 2, "ROLE_USER")));
+            Collections.singletonList(new UserRole(USER_ID + 2, Role.ROLE_USER.name())));
     private static List<User> USER_LIST = Arrays.asList(USER, USER2, USER3);
 
     {

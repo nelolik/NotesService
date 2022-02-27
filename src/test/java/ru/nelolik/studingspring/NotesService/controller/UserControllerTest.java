@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.testcontainers.shaded.org.apache.commons.lang.CharSet;
 import ru.nelolik.studingspring.NotesService.config.SpringConfig;
+import ru.nelolik.studingspring.NotesService.config.TestConfig;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -24,7 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = SpringConfig.class)
+@ContextConfiguration(classes = ru.nelolik.studingspring.NotesService.config.SpringConfig.class)
 @WebAppConfiguration
 public class UserControllerTest {
 
