@@ -51,13 +51,13 @@ public class UserDaoTest {
 
     @Test
     void insertValuesTest() {
-        long lastId = 0;
         for (User user :
                 users) {
-            lastId = usersDao.insertUser(user);
+            usersDao.insertUser(user);
         }
-        Assertions.assertEquals(users.size(), lastId,
-                "Count of inserted values is not equal to users size");
+        List<User> usersFromDb = usersDao.getAllUsers();
+        assertThat(usersFromDb).isNotNull()
+                .containsExactlyInAnyOrderElementsOf(users);
     }
 
     @Test
