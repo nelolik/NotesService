@@ -1,17 +1,17 @@
 package ru.nelolik.studingspring.NotesService.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.nelolik.studingspring.NotesService.db.dataset.Note;
+import ru.nelolik.studingspring.NotesService.db.dataset.Role;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
 import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
 import ru.nelolik.studingspring.NotesService.db.service.NotesService;
@@ -19,9 +19,7 @@ import ru.nelolik.studingspring.NotesService.db.service.UsersService;
 import ru.nelolik.studingspring.NotesService.model.UserInput;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Controller
@@ -47,29 +45,16 @@ public class UsersController {
 
     @GetMapping(value = "/json", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody()
-    public String getAllUsersJson() throws JSONException {
+    public String getAllUsersJson() throws JsonProcessingException {
         List<User> users = usersService.getAllUsers();
-        List<String> usersString = users.stream().map(u -> {
-            try {
-                return new JSONObject().put("userId", u.getId()).put("userName", u.getUsername()).toString();
-            } catch (JSONException e) {
-                log.error("Request GET to /users/json. Error while making JSONObject with userId={}, userName={}.",
-                        u.getId(), u.getUsername());
-                e.printStackTrace();
-            }
-            return "error";
-        }).toList();
-        JSONArray jsonArray = new JSONArray(usersString);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("users", jsonArray);
-        log.debug("Request GET to /users/json. Method getAllUsersJson().");
-        return jsonObject.toString();
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(users);
     }
 
     @GetMapping("/new")
     public String addNewUser(@ModelAttribute UserInput input) {
         usersService.insertUser(new User(0L, input.getInput(), "",
-                Collections.singletonList(new UserRole(0L, "ROLE_USER"))));
+                Collections.singletonList(new UserRole(0L, Role.ROLE_USER.name()))));
         log.debug("Request GET to /users/new. Method addNewUser(). New username: {}", input.getInput());
         return "redirect:/users";
     }
@@ -139,26 +124,15 @@ public class UsersController {
 
     @GetMapping(value = "{id}/json", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
-    public String showUserJson(@PathVariable("id") long id) throws JSONException {
+    public String showUserJson(@PathVariable("id") long id) throws JsonProcessingException {
         User user = usersService.getUserById(id);
         List<Note> notes = notesService.getNotesByUserId(id);
-        List<String> convertedNotes = notes.stream().map(n -> {
-                    try {
-                        return new JSONObject().put("noteId", n.getId())
-                                .put("userId", n.getUserId())
-                                .put("text", n.getRecord()).toString();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    return "Ups";
-                }).toList();
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("userId", user.getId());
-        jsonObject.put("userName", user.getUsername());
-        jsonObject.put("notes", convertedNotes);
-        log.debug("Request GET to /users/{}/json. Method showUserJson. userId={}, userName={}, notes: {}",
-                id, user.getId(), user.getUsername(), convertedNotes);
-        return jsonObject.toString();
+
+        Map<String, Object> m = new HashMap<>();
+        m.put("user", user);
+        m.put("notes", notes);
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(m);
     }
 
 
