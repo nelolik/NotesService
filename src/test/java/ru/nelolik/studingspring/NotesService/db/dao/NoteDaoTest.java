@@ -76,13 +76,30 @@ class NoteDaoTest {
     }
 
     @Test
+    void getNoteWithNotExistingIdTest() {
+        insertNotes();
+        List<Note> notes = notesDAO.getAllNotes();
+        long maxId = notes.stream().map(Note::getId).max(Long::compareTo).orElse(100L);
+        Note notExistingNote = notesDAO.getOneNote(maxId + 10);
+        Assertions.assertNull(notExistingNote, "Db returned note with not existing id");
+    }
+
+    @Test
+    void getNoteWithNotExistingUserIdTest() {
+        insertNotes();
+        List<Note> notes = notesDAO.getAllNotes();
+        long maxUserId = notes.stream().map(Note::getUserId).max(Long::compareTo).orElse(100L);
+        List<Note> notExistingNotes = notesDAO.getNotesByUserId(maxUserId + 10L);
+        Assertions.assertEquals(notExistingNotes.size(), 0, "Db returned note with not existing userId");
+    }
+
+    @Test
     void indexTest() {
         clearDb();
         insertNotes();
         List<Note> notesFromDb = notesDAO.getAllNotes();
         assertThat(notesFromDb).isNotNull()
                 .containsExactlyInAnyOrderElementsOf(notes);
-//        Assertions.assertTrue(notes.equals(notesFromDb), "Recorded and returned list are not equals.");
     }
 
     @Test

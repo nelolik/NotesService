@@ -46,6 +46,9 @@ public class UsersDAO_ImplementedWithHibernate implements UsersDAO {
         try {
             Session session = sessionFactory.openSession();
             user = session.get(User.class, id);
+            if (user == null) {
+                return null;
+            }
             user.setRoles(userRoleDAO.getByUserid(user.getId()));
             session.close();
         } catch (HibernateException e) {
