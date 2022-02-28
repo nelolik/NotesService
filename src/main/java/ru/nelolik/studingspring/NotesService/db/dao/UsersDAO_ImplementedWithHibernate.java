@@ -85,6 +85,8 @@ public class UsersDAO_ImplementedWithHibernate implements UsersDAO {
             Session session = sessionFactory.openSession();
             Transaction transaction = session.beginTransaction();
             Long id = (Long) session.save(user);
+            transaction.commit();
+            transaction.begin();
             List<UserRole> roles = user.getRoles();
             for (UserRole r :
                     roles) {
