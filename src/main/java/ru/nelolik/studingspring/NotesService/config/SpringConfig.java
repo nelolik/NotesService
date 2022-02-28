@@ -20,8 +20,6 @@ import ru.nelolik.studingspring.NotesService.db.dataset.User;
 import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
 
 @Configuration
-@ComponentScan("ru.nelolik.studingspring.NotesService")
-@PropertySource("classpath:application.properties")
 @EnableJpaRepositories("ru.nelolik.studingspring.NotesService.db")
 public class SpringConfig implements WebMvcConfigurer {
 
