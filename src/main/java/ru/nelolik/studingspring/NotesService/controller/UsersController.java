@@ -43,7 +43,7 @@ public class UsersController {
         return "users/index";
     }
 
-    @GetMapping(value = "/json", produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(value = "/json", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody()
     public String getAllUsersJson() throws JsonProcessingException {
         List<User> users = usersService.getAllUsers();
@@ -122,7 +122,7 @@ public class UsersController {
         return "users/user";
     }
 
-    @GetMapping(value = "{id}/json", produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(value = "{id}/json", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String showUserJson(@PathVariable("id") long id) throws JsonProcessingException {
         User user = usersService.getUserById(id);

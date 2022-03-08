@@ -7,20 +7,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.nelolik.studingspring.NotesService.config.TestContainerConfig;
-
-import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@ContextConfiguration(classes = {TestContainerConfig.class, UsersController.class},
-                        loader = AnnotationConfigContextLoader.class)
+@SpringBootTest
+@ContextConfiguration(classes = {TestContainerConfig.class, UsersController.class})
 @AutoConfigureMockMvc(addFilters = false)
 public class UserControllerTest {
 
@@ -79,8 +75,7 @@ public class UserControllerTest {
     public void showUserJsonTest() throws Exception {
         int id = 1;
         mockMvc.perform(get("/users/{id}/json", id)).
-                andExpect(content().contentType(MediaType.valueOf("text/html;charset=UTF-8"))).
-                andExpect(content().encoding(StandardCharsets.UTF_8)).
+                andExpect(content().contentType(MediaType.valueOf("application/json"))).
                 andExpect(content().string(containsString("user"))).
                 andExpect(content().string(containsString("notes"))).
                 andExpect(content().string(containsString("username"))).
@@ -90,10 +85,12 @@ public class UserControllerTest {
 
     @Test
     public void getAllUsersJsonTest() throws Exception {
-        mockMvc.perform(get("/users")).
-                andExpect(content().contentType(MediaType.valueOf("text/html;charset=UTF-8"))).
-                andExpect(content().encoding(StandardCharsets.UTF_8)).
-                andExpect(content().string(containsString("users")));
+        mockMvc.perform(get("/users/json")).
+                andExpect(content().contentType(MediaType.valueOf("application/json"))).
+                andExpect(content().string(containsString("id"))).
+                andExpect(content().string(containsString("username"))).
+                andExpect(content().string(containsString("password"))).
+                andExpect(content().string(containsString("roles")));
     }
 
 }

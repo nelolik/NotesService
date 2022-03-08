@@ -12,23 +12,18 @@ import org.springframework.context.annotation.ComponentScan;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
-import ru.nelolik.studingspring.NotesService.db.dao.*;
 import ru.nelolik.studingspring.NotesService.db.dataset.Note;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
 import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
-import ru.nelolik.studingspring.NotesService.db.service.NotesService;
-import ru.nelolik.studingspring.NotesService.db.service.NotesServiceImpl;
-import ru.nelolik.studingspring.NotesService.db.service.UserServiceImpl;
-import ru.nelolik.studingspring.NotesService.db.service.UsersService;
 
 @TestConfiguration
-@ComponentScan("test.ru.nelolik.studingspring.NotesService.controller")
-@ComponentScan("ru.nelolik.studingspring.NotesService.controller")
+@ComponentScan("ru.nelolik.studingspring.NotesService.db")
 public class TestContainerConfig {
 
     @Bean(initMethod = "start", destroyMethod = "stop")
     public JdbcDatabaseContainer<?> jdbcDatabaseContainer() {
         return new PostgreSQLContainer<>("postgres:14.1")
+                .withInitScript("testContainerData.sql")
                 .waitingFor(Wait.forListeningPort());
     }
 
@@ -51,6 +46,7 @@ public class TestContainerConfig {
         configuration.setProperty("hibernate.connection.url", jdbcDatabaseContainer.getJdbcUrl());
         configuration.setProperty("hibernate.connection.username", jdbcDatabaseContainer.getUsername());
         configuration.setProperty("hibernate.connection.password", jdbcDatabaseContainer.getPassword());
+        configuration.setProperty("hibernate.ddl-auto", "none");
         configuration.setProperty("hibernate.show_sql", "true");
 
         log.info("First mapped port: " + jdbcDatabaseContainer.getFirstMappedPort());
@@ -65,30 +61,4 @@ public class TestContainerConfig {
         ServiceRegistry serviceRegistry = builder.build();
         return configuration.buildSessionFactory(serviceRegistry);
     }
-
-    @Bean
-    public UsersDAO usersDaoForTC(SessionFactory sessionFactory) {
-        return new UsersDAO_ImplementedWithHibernate(sessionFactory);
-    }
-
-    @Bean
-    public NotesDAO notesDAOForTC(SessionFactory sessionFactory) {
-        return new NotesDAO_ImplementedWithHibernate(sessionFactory);
-    }
-
-    @Bean
-    public UsersService usersServiceForTC(UsersDAO usersDAO) {
-        return new UserServiceImpl(usersDAO);
-    }
-
-    @Bean
-    public NotesService notesServiceForTC(NotesDAO notesDAO) {
-        return new NotesServiceImpl(notesDAO);
-    }
-
-    @Bean
-    UserRoleDAO userRoleDAOForTC(SessionFactory sessionFactory) {
-        return new UserRoleDAOImplementation(sessionFactory);
-    }
-
 }
