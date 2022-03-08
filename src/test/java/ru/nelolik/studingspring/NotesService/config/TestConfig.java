@@ -11,10 +11,6 @@ import ru.nelolik.studingspring.NotesService.db.dao.*;
 import ru.nelolik.studingspring.NotesService.db.dataset.Note;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
 import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
-import ru.nelolik.studingspring.NotesService.db.service.NotesService;
-import ru.nelolik.studingspring.NotesService.db.service.NotesServiceImpl;
-import ru.nelolik.studingspring.NotesService.db.service.UserServiceImpl;
-import ru.nelolik.studingspring.NotesService.db.service.UsersService;
 
 @TestConfiguration
 @ComponentScan("test.ru.nelolik.studingspring.NotesService")
@@ -29,16 +25,6 @@ public class TestConfig {
     @Bean
     public NotesDAO notesDAO() {
         return new NotesDAO_ImplementedWithHibernate(createTestSessionFactory(getH2Configuration()));
-    }
-
-    @Bean
-    public UsersService usersService() {
-        return new UserServiceImpl(usersDao());
-    }
-
-    @Bean
-    public NotesService notesService() {
-        return new NotesServiceImpl(notesDAO());
     }
 
     @Bean
