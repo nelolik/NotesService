@@ -138,7 +138,7 @@ public class UsersController {
             Note note = new Note(0L, id, input.getInput());
             service.addNote(note);
         } else {
-            System.out.println("Note object is null");
+            log.debug("Note object is null");
         }
         log.debug("Request POST to /users/{}. Method addUserNote()", id);
         return "redirect:/users/" + id;
