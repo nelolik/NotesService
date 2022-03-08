@@ -1,6 +1,7 @@
 package ru.nelolik.studingspring.NotesService.db.dao;
 
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.nelolik.studingspring.NotesService.db.dataset.Note;
+import ru.nelolik.studingspring.NotesService.db.exception.DataBaseException;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
@@ -17,6 +19,7 @@ import java.util.List;
 
 @Repository
 @NoArgsConstructor
+@Slf4j
 public class NotesDAO_ImplementedWithHibernate implements NotesDAO{
 
     private SessionFactory sessionFactory;
@@ -34,7 +37,8 @@ public class NotesDAO_ImplementedWithHibernate implements NotesDAO{
             note = session.get(Note.class,noteId);
             session.close();
         } catch (HibernateException e) {
-            e.printStackTrace();
+            log.error("Error while getting note by noteId from notes db");
+            throw new DataBaseException(e);
         }
         return note;
     }
@@ -51,7 +55,8 @@ public class NotesDAO_ImplementedWithHibernate implements NotesDAO{
             list = session.createQuery(criteria).list();
             session.close();
         } catch (HibernateException e) {
-            e.printStackTrace();
+            log.error("Error while getting note by userId from notes db");
+            throw new DataBaseException(e);
         }
         return list;
     }
@@ -64,7 +69,8 @@ public class NotesDAO_ImplementedWithHibernate implements NotesDAO{
             String sql = "from " + Note.class.getSimpleName();
             list = session.createQuery(sql).list();
         } catch (HibernateException e) {
-            e.printStackTrace();
+            log.error("Error while getting all notes from notes db");
+            throw new DataBaseException(e);
         }
         return list;
     }
@@ -79,9 +85,9 @@ public class NotesDAO_ImplementedWithHibernate implements NotesDAO{
             session.close();
             return id;
         } catch (HibernateException e) {
-            e.printStackTrace();
+            log.error("Error while adding note to notes db");
+            throw new DataBaseException(e);
         }
-        return -1;
     }
 
     @Override
@@ -95,7 +101,8 @@ public class NotesDAO_ImplementedWithHibernate implements NotesDAO{
             session.createQuery(criteriaDelete).executeUpdate();
             transaction.commit();
         } catch (HibernateException e) {
-            e.printStackTrace();
+            log.error("Error while removing note by noteId from notes db");
+            throw new DataBaseException(e);
         }
     }
 
@@ -110,7 +117,8 @@ public class NotesDAO_ImplementedWithHibernate implements NotesDAO{
             session.createQuery(criteriaDelete).executeUpdate();
             transaction.commit();
         } catch (HibernateException e) {
-            e.printStackTrace();
+            log.error("Error while removing note by userId from notes db");
+            throw new DataBaseException(e);
         }
     }
 }

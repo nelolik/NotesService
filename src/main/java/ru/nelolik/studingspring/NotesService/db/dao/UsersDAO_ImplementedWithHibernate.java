@@ -1,15 +1,18 @@
 package ru.nelolik.studingspring.NotesService.db.dao;
 
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.*;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
 import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
+import ru.nelolik.studingspring.NotesService.db.exception.DataBaseException;
 
 import javax.persistence.criteria.*;
 import java.util.List;
 
+@Slf4j
 @Repository
 public class UsersDAO_ImplementedWithHibernate implements UsersDAO {
 
@@ -34,7 +37,8 @@ public class UsersDAO_ImplementedWithHibernate implements UsersDAO {
                 u.setRoles(userRoleDAO.getByUserid(u.getId()));
             }
         } catch (HibernateException e) {
-            e.printStackTrace();
+            log.error("Error while reading all users from users db");
+            throw new DataBaseException(e);
         }
 
         return list;
@@ -52,7 +56,8 @@ public class UsersDAO_ImplementedWithHibernate implements UsersDAO {
             user.setRoles(userRoleDAO.getByUserid(user.getId()));
             session.close();
         } catch (HibernateException e) {
-            e.printStackTrace();
+            log.error("Error while reading user by user Id from users db");
+            throw new DataBaseException(e);
         }
 
         return user;
@@ -73,7 +78,8 @@ public class UsersDAO_ImplementedWithHibernate implements UsersDAO {
             user = query.uniqueResult();
             session.close();
         } catch (HibernateException e) {
-            e.printStackTrace();
+            log.error("Error while reading user by userName from users db");
+            throw new DataBaseException(e);
         }
         return user;
     }
@@ -96,9 +102,9 @@ public class UsersDAO_ImplementedWithHibernate implements UsersDAO {
             session.close();
             return id;
         } catch (HibernateException e) {
-            e.printStackTrace();
+            log.error("Error while inserting user to users db");
+            throw new DataBaseException(e);
         }
-        return -1;
     }
 
     @Override
@@ -109,7 +115,8 @@ public class UsersDAO_ImplementedWithHibernate implements UsersDAO {
             session.update(user);
             transaction.commit();
         } catch (HibernateException e) {
-            e.printStackTrace();
+            log.error("Error while editing user from users db");
+            throw new DataBaseException(e);
         }
     }
 
@@ -125,7 +132,8 @@ public class UsersDAO_ImplementedWithHibernate implements UsersDAO {
             transaction.commit();
             session.close();
         } catch (HibernateException e) {
-            e.printStackTrace();
+            log.error("Error while deleting user by userId from users db");
+            throw new DataBaseException(e);
         }
     }
 
