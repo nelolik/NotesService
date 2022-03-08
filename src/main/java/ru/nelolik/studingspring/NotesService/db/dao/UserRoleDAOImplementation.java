@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
 
-import javax.persistence.Parameter;
 import javax.persistence.criteria.*;
 import java.util.List;
 

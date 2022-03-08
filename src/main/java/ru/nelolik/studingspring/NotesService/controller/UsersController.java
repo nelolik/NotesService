@@ -15,7 +15,6 @@ import ru.nelolik.studingspring.NotesService.db.dataset.Role;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
 import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
 import ru.nelolik.studingspring.NotesService.db.service.UserDataService;
-import ru.nelolik.studingspring.NotesService.db.service.UserDataServiceImpl;
 import ru.nelolik.studingspring.NotesService.model.UserInput;
 
 import javax.servlet.http.HttpServletRequest;
