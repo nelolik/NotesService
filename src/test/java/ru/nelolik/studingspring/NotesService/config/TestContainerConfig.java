@@ -41,12 +41,12 @@ public class TestContainerConfig {
         configuration.addAnnotatedClass(Note.class);
         configuration.addAnnotatedClass(UserRole.class);
 
-        configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+        configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL10Dialect");
         configuration.setProperty("hibernate.connection.driver_class", jdbcDatabaseContainer.getDriverClassName());
         configuration.setProperty("hibernate.connection.url", jdbcDatabaseContainer.getJdbcUrl());
         configuration.setProperty("hibernate.connection.username", jdbcDatabaseContainer.getUsername());
         configuration.setProperty("hibernate.connection.password", jdbcDatabaseContainer.getPassword());
-        configuration.setProperty("hibernate.ddl-auto", "none");
+        configuration.setProperty("hibernate.ddl-auto", "update");
         configuration.setProperty("hibernate.show_sql", "true");
 
         log.info("First mapped port: " + jdbcDatabaseContainer.getFirstMappedPort());

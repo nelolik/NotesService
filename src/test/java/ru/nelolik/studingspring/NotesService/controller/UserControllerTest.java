@@ -34,7 +34,7 @@ public class UserControllerTest {
 
     @Test
     public void addNewUserShouldRedirect() throws Exception {
-        mockMvc.perform(get("/users/new")).
+        mockMvc.perform(get("/users/new").param("input", "New name")).
                 andExpect(status().is3xxRedirection()).
                 andExpect(redirectedUrl("/users"));
     }
