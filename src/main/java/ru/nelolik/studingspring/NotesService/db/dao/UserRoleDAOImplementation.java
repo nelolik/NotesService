@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public class UserRoleDAOImplementation implements UserRoleDAO{
 
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
     @Autowired
     public UserRoleDAOImplementation(SessionFactory sessionFactory) {
