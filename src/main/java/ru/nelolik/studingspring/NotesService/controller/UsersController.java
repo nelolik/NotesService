@@ -15,6 +15,10 @@ import ru.nelolik.studingspring.NotesService.db.dataset.Role;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
 import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
 import ru.nelolik.studingspring.NotesService.db.service.UserDataService;
+import ru.nelolik.studingspring.NotesService.dto.NoteDTO;
+import ru.nelolik.studingspring.NotesService.dto.NoteToDtoConverter;
+import ru.nelolik.studingspring.NotesService.dto.UserDTO;
+import ru.nelolik.studingspring.NotesService.dto.UserToDtoConverter;
 import ru.nelolik.studingspring.NotesService.model.UserInput;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,12 +30,17 @@ import java.util.*;
 @AllArgsConstructor
 public class UsersController {
 
-    private UserDataService service;
+    private final UserDataService service;
+
+    private final UserToDtoConverter userToDtoConverter;
+
+    private final NoteToDtoConverter noteToDtoConverter;
 
     @GetMapping()
     public String getAllUsers(Model model) {
         List<User> users = service.getAllUsers();
-        model.addAttribute("users", users);
+        List<UserDTO> dtos = userToDtoConverter.usersToDto(users);
+        model.addAttribute("users", dtos);
         log.debug("Request GET to address /users. Method getAllUsers()");
         return "users/index";
     }
@@ -40,14 +49,19 @@ public class UsersController {
     @ResponseBody()
     public String getAllUsersJson() throws JsonProcessingException {
         List<User> users = service.getAllUsers();
+        List<UserDTO> dtos = userToDtoConverter.usersToDto(users);
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(users);
+        return mapper.writeValueAsString(dtos);
     }
 
     @GetMapping("/new")
     public String addNewUser(@ModelAttribute UserInput input) {
-        service.insertUser(new User(0L, input.getInput(), "",
-                Collections.singletonList(new UserRole(0L, Role.ROLE_USER.name()))));
+        if (input == null || input.getInput() == null || input.getInput().isBlank()) {
+            log.error("Attempt to add user with empty name");
+            return "redirect:/users";
+        }
+        UserDTO userDTO = new UserDTO(0L, input.getInput());
+        service.insertUser(userToDtoConverter.userDtoToUser(userDTO));
         log.debug("Request GET to /users/new. Method addNewUser(). New username: {}", input.getInput());
         return "redirect:/users";
     }
@@ -55,7 +69,8 @@ public class UsersController {
     @GetMapping("/manage")
     public String manageUsers(Model model) {
         List<User> users = service.getAllUsers();
-        model.addAttribute("users", users);
+        List<UserDTO> dtos = userToDtoConverter.usersToDto(users);
+        model.addAttribute("users", dtos);
         log.debug("Request GET to /users/manage. Method manageUsers().");
         return "users/manage";
     }
@@ -109,8 +124,10 @@ public class UsersController {
         if (notes == null) {
             notes = new ArrayList<>();
         }
-        model.addAttribute("user", user);
-        model.addAttribute("notes", notes);
+        UserDTO userDTO = userToDtoConverter.userToDto(user);
+        List<NoteDTO> noteDTOS = noteToDtoConverter.notesToDto(notes);
+        model.addAttribute("user", userDTO);
+        model.addAttribute("notes", noteDTOS);
         log.debug("Request GET to /users/{}. Method showUser()", id);
         return "users/user";
     }
@@ -120,10 +137,11 @@ public class UsersController {
     public String showUserJson(@PathVariable("id") long id) throws JsonProcessingException {
         User user = service.getUserById(id);
         List<Note> notes = service.getNotesByUserId(id);
-
+        UserDTO userDTO = userToDtoConverter.userToDto(user);
+        List<NoteDTO> noteDTOS = noteToDtoConverter.notesToDto(notes);
         Map<String, Object> m = new HashMap<>();
-        m.put("user", user);
-        m.put("notes", notes);
+        m.put("user", userDTO);
+        m.put("notes", noteDTOS);
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(m);
     }
@@ -134,8 +152,8 @@ public class UsersController {
                               BindingResult bindingResult,
                               @PathVariable long id) {
         if (!bindingResult.hasErrors()) {
-            Note note = new Note(0L, id, input.getInput());
-            service.addNote(note);
+            NoteDTO noteDTO = new NoteDTO(0L, id, input.getInput());
+            service.addNote(noteToDtoConverter.noteDtoToNote(noteDTO));
         } else {
             log.debug("Note object is null");
         }
