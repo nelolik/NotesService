@@ -1,6 +1,5 @@
 package ru.nelolik.studingspring.NotesService.db.dao;
 
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -17,11 +16,10 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Repository
-@NoArgsConstructor
 @Slf4j
 public class NotesDAO_ImplementedWithHibernate implements NotesDAO{
 
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
     @Autowired
     public NotesDAO_ImplementedWithHibernate(SessionFactory sessionFactory) {
@@ -30,7 +28,7 @@ public class NotesDAO_ImplementedWithHibernate implements NotesDAO{
 
     @Override
     public Note getOneNote(long noteId) {
-        Note note = null;
+        Note note;
         try {
             Session session = sessionFactory.openSession();
             note = session.get(Note.class,noteId);
@@ -44,7 +42,7 @@ public class NotesDAO_ImplementedWithHibernate implements NotesDAO{
 
     @Override
     public List<Note> getNotesByUserId(long userId) {
-        List<Note> list = null;
+        List<Note> list;
         try {
             Session session = sessionFactory.openSession();
             CriteriaBuilder criteriaBuilder = sessionFactory.getCriteriaBuilder();
@@ -62,7 +60,7 @@ public class NotesDAO_ImplementedWithHibernate implements NotesDAO{
 
     @Override
     public List<Note> getAllNotes() {
-        List<Note> list = null;
+        List<Note> list;
         try {
             Session session = sessionFactory.openSession();
             String sql = "from " + Note.class.getSimpleName();

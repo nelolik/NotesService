@@ -27,9 +27,6 @@ insert into users (id, username, password)
 values (nextval('user_id_sequence'), 'Aleksey', 'Password1'),
        (nextval('user_id_sequence'), 'Tatjana', 'Password2'),
        (nextval('user_id_sequence'), 'Nikolay', 'Password3');
---values (1, 'Aleksey', 'Password1'),
---       (2, 'Tatjana', 'Password2'),
---       (3, 'Nikolay', 'Password3');
 
 
 INSERT INTO notes (id, user_id, record)

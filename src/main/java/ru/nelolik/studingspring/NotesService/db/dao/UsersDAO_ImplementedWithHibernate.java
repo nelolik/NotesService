@@ -16,7 +16,7 @@ import java.util.List;
 @Repository
 public class UsersDAO_ImplementedWithHibernate implements UsersDAO {
 
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
     @Autowired
     private UserRoleDAO userRoleDAO;
@@ -28,7 +28,7 @@ public class UsersDAO_ImplementedWithHibernate implements UsersDAO {
 
     @Override
     public List<User> getAllUsers() {
-        List<User> list = null;
+        List<User> list;
         try (Session session = sessionFactory.openSession()) {
             String sql = "from " + User.class.getSimpleName();
             list = session.createQuery(sql).list();
@@ -46,7 +46,7 @@ public class UsersDAO_ImplementedWithHibernate implements UsersDAO {
 
     @Override
     public User getUserById(long id) {
-        User user = null;
+        User user;
         try {
             Session session = sessionFactory.openSession();
             user = session.get(User.class, id);
@@ -65,7 +65,7 @@ public class UsersDAO_ImplementedWithHibernate implements UsersDAO {
 
     @Override
     public User getUserByName(String name) {
-        User user = null;
+        User user;
         try {
             Session session = sessionFactory.openSession();
             CriteriaBuilder criteriaBuilder = sessionFactory.getCriteriaBuilder();

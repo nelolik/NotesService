@@ -14,9 +14,9 @@ import java.util.List;
 @AllArgsConstructor
 public class UserDataServiceImpl implements UserDataService {
 
-    private UsersDAO usersDao;
+    private final UsersDAO usersDao;
 
-    private NotesDAO notesDAO;
+    private final NotesDAO notesDAO;
 
 
     @Override
