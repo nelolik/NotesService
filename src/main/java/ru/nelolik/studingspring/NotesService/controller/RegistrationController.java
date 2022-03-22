@@ -30,14 +30,14 @@ public class RegistrationController {
 
     @PostMapping("/registration")
     public String addUser(User user, Model model) {
-        User userFromDb = usersService.getUserByName(user.getUsername());
+        User userFromDb = usersService.getUserByNameOrigin(user.getUsername());
         if (userFromDb != null) {
             model.addAttribute("message", "User exists");
             log.info("RegistrationController.addUser. User with name /{} already exists.", user.getUsername());
             return "registration";
         }
         user.setRoles(Collections.singletonList(new UserRole(1L, Role.ROLE_USER.name())));
-        usersService.insertUser(user);
+        usersService.insertUserOrigin(user);
         log.info("RegistrationController.addUser. User with name /{} successfully added.", user.getUsername());
         return "redirect:/login";
     }

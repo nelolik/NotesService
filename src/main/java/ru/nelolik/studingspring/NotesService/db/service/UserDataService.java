@@ -2,30 +2,36 @@ package ru.nelolik.studingspring.NotesService.db.service;
 
 import ru.nelolik.studingspring.NotesService.db.dataset.Note;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
+import ru.nelolik.studingspring.NotesService.dto.NoteDTO;
+import ru.nelolik.studingspring.NotesService.dto.UserDTO;
 
 import java.util.List;
 
 public interface UserDataService {
 
-    List<User> getAllUsers();
+    List<UserDTO> getAllUsers();
 
-    User getUserById(long id);
+    UserDTO getUserById(long id);
 
-    User getUserByName(String name);
+    UserDTO getUserByName(String name);
 
-    long insertUser(User user);
+    User getUserByNameOrigin(String name);
 
-    void editUser(User user);
+    long insertUser(UserDTO user);
+
+    long insertUserOrigin(User user);
+
+    void editUser(UserDTO user);
 
     void removeUserById(long id);
 
-    List<Note> getAllNotes();
+    List<NoteDTO> getAllNotes();
 
-    List<Note> getNotesByUserId(long userId);
+    List<NoteDTO> getNotesByUserId(long userId);
 
-    Note getNoteById(long noteId);
+    NoteDTO getNoteById(long noteId);
 
-    long addNote(Note note);
+    long addNote(NoteDTO note);
 
     void removeNotesByUserId(long userId);
 

@@ -15,6 +15,8 @@ import ru.nelolik.studingspring.NotesService.db.dataset.Role;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
 import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
 import ru.nelolik.studingspring.NotesService.db.service.UserDataService;
+import ru.nelolik.studingspring.NotesService.dto.NoteDTO;
+import ru.nelolik.studingspring.NotesService.dto.UserDTO;
 import ru.nelolik.studingspring.NotesService.model.UserInput;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +32,7 @@ public class UsersController {
 
     @GetMapping()
     public String getAllUsers(Model model) {
-        List<User> users = service.getAllUsers();
+        List<UserDTO> users = service.getAllUsers();
         model.addAttribute("users", users);
         log.debug("Request GET to address /users. Method getAllUsers()");
         return "users/index";
@@ -39,22 +41,21 @@ public class UsersController {
     @GetMapping(value = "/json", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody()
     public String getAllUsersJson() throws JsonProcessingException {
-        List<User> users = service.getAllUsers();
+        List<UserDTO> users = service.getAllUsers();
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(users);
     }
 
     @GetMapping("/new")
     public String addNewUser(@ModelAttribute UserInput input) {
-        service.insertUser(new User(0L, input.getInput(), "",
-                Collections.singletonList(new UserRole(0L, Role.ROLE_USER.name()))));
+        service.insertUser(new UserDTO(0L, input.getInput()));
         log.debug("Request GET to /users/new. Method addNewUser(). New username: {}", input.getInput());
         return "redirect:/users";
     }
 
     @GetMapping("/manage")
     public String manageUsers(Model model) {
-        List<User> users = service.getAllUsers();
+        List<UserDTO> users = service.getAllUsers();
         model.addAttribute("users", users);
         log.debug("Request GET to /users/manage. Method manageUsers().");
         return "users/manage";
@@ -70,7 +71,7 @@ public class UsersController {
             log.debug("Request POST to /users/manage/delete. Method deleteUser(). Removed user and his notes with userId={}",
                     userId);
         } else {
-            log.debug("Request POST to /users/manage/delete. Method deleteUser(). User id is null");
+            log.error("Request POST to /users/manage/delete. Method deleteUser(). User id is null");
         }
         return "redirect:/users/manage";
     }
@@ -80,18 +81,12 @@ public class UsersController {
         String id_string = request.getParameter("id");
         String name = request.getParameter("name");
         if (id_string == null || name == null) {
-            log.debug("Request POST to /users/manage/edit. Method manageUsers(). User`s id or name is null: id ={}, name = {}",
+            log.error("Request POST to /users/manage/edit. Method manageUsers(). User`s id or name is null: id ={}, name = {}",
                     id_string, name);
             return "redirect:/users/manage";
         }
         Long id = Long.valueOf(id_string);
-        User user = service.getUserById(id);
-        if (user == null) {
-            log.debug("Request POST to /users/manage/edit. Method manageUsers(). User with id ={} is not registered",
-                    id);
-            return "redirect:/users/manage";
-        }
-        user.setUsername(name);
+        UserDTO user = new UserDTO(id, name);
         service.editUser(user);
         log.debug("Request POST to /users/manage/edit. Method manageUsers(). Edited user with id={}, name={}",
                 id, name);
@@ -101,10 +96,10 @@ public class UsersController {
 
         @GetMapping("/{id}")
     public String showUser(@PathVariable("id") long id, Model model) {
-        User user = service.getUserById(id);
-        List<Note> notes = service.getNotesByUserId(id);
+        UserDTO user = service.getUserById(id);
+        List<NoteDTO> notes = service.getNotesByUserId(id);
         if (user == null) {
-            user = new User();
+            user = new UserDTO();
         }
         if (notes == null) {
             notes = new ArrayList<>();
@@ -118,8 +113,8 @@ public class UsersController {
     @GetMapping(value = "{id}/json", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String showUserJson(@PathVariable("id") long id) throws JsonProcessingException {
-        User user = service.getUserById(id);
-        List<Note> notes = service.getNotesByUserId(id);
+        UserDTO user = service.getUserById(id);
+        List<NoteDTO> notes = service.getNotesByUserId(id);
 
         Map<String, Object> m = new HashMap<>();
         m.put("user", user);
@@ -134,10 +129,10 @@ public class UsersController {
                               BindingResult bindingResult,
                               @PathVariable long id) {
         if (!bindingResult.hasErrors()) {
-            Note note = new Note(0L, id, input.getInput());
+            NoteDTO note = new NoteDTO(0L, id, input.getInput());
             service.addNote(note);
         } else {
-            log.debug("Note object is null");
+            log.error("BindingResult has errors");
         }
         log.debug("Request POST to /users/{}. Method addUserNote()", id);
         return "redirect:/users/" + id;

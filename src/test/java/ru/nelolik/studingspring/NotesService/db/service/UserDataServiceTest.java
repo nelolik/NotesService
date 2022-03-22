@@ -11,6 +11,8 @@ import ru.nelolik.studingspring.NotesService.db.dataset.Note;
 import ru.nelolik.studingspring.NotesService.db.dataset.Role;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
 import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
+import ru.nelolik.studingspring.NotesService.dto.NoteDTO;
+import ru.nelolik.studingspring.NotesService.dto.UserDTO;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,7 +34,7 @@ public class UserDataServiceTest {
     @Autowired
     UserDataService service;
 
-    private static long USER_ID = 1;
+    private static final long USER_ID = 1;
     private static final User USER = new User(USER_ID, "User name", "p1",
             Collections.singletonList(new UserRole(USER_ID, Role.ROLE_USER.name())));
     private static final User USER2 = new User(USER_ID + 1, "User name2", "p2",
@@ -54,19 +56,19 @@ public class UserDataServiceTest {
     @Test
     void getUserByIdTest() {
         when(usersDAO.getUserById(USER_ID)).thenReturn(USER);
-        User u = service.getUserById(USER_ID);
-        Assertions.assertEquals(USER, u, "Mocked user and returned user ane not equal.");
+        UserDTO u = service.getUserById(USER_ID);
+        Assertions.assertEquals(new UserDTO(USER), u, "Mocked user and returned user ane not equal.");
     }
 
     @Test
     void insertUserTest() {
-        service.insertUser(USER);
+        service.insertUser(new UserDTO(USER));
         verify(usersDAO, atLeastOnce()).insertUser(eq(USER));
     }
 
     @Test
     void editUserTest() {
-        service.editUser(USER);
+        service.editUser(new UserDTO(USER));
         verify(usersDAO, atLeastOnce()).editUser(eq(USER));
     }
 
@@ -79,35 +81,38 @@ public class UserDataServiceTest {
     @Test
     void getAllUsersTest() {
         when(usersDAO.getAllUsers()).thenReturn(USER_LIST);
-        List<User> result = service.getAllUsers();
-        Assertions.assertEquals(USER_LIST, result, "Method index returned wrong result");
+        List<UserDTO> result = service.getAllUsers();
+        Assertions.assertEquals(USER_LIST.stream().map(UserDTO::new),
+                result, "Method index returned wrong result");
     }
 
     @Test
     void getAllNotesTest() {
         when(notesDAO.getAllNotes()).thenReturn(NOTES);
-        List<Note> result = service.getAllNotes();
-        assertThat(result).isNotNull().containsExactlyInAnyOrderElementsOf(NOTES);
+        List<NoteDTO> result = service.getAllNotes();
+        List<NoteDTO> noteDTOS = NOTES.stream().map(NoteDTO::new).toList();
+        assertThat(result).isNotNull().containsExactlyInAnyOrderElementsOf(noteDTOS);
     }
 
     @Test
     void getNotesByUserIdTest() {
         when(notesDAO.getNotesByUserId(USER_ID1)).thenReturn(NOTES_USER1);
-        List<Note> result = service.getNotesByUserId(USER_ID1);
+        List<NoteDTO> result = service.getNotesByUserId(USER_ID1);
+        List<NoteDTO> noteDTOS = NOTES_USER1.stream().map(NoteDTO::new).toList();
         Assertions.assertEquals(NOTES_USER1, result);
     }
 
     @Test
     void getNoteByIdTest() {
         when(notesDAO.getOneNote(NOTE_ID)).thenReturn(NOTE1);
-        Note result = service.getNoteById(NOTE_ID);
-        Assertions.assertEquals(NOTE1, result);
+        NoteDTO result = service.getNoteById(NOTE_ID);
+        Assertions.assertEquals(new NoteDTO(NOTE1), result);
     }
 
     @Test
     void addNoteTest() {
         when(notesDAO.addNote(NOTE1)).thenReturn(NOTE_ID);
-        long result = service.addNote(NOTE1);
+        long result = service.addNote(new NoteDTO(NOTE1));
         Assertions.assertEquals(NOTE_ID, result);
     }
 
