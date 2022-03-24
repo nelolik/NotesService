@@ -14,9 +14,11 @@ import ru.nelolik.studingspring.NotesService.db.dataset.Note;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.*;
+
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class, loader = AnnotationConfigContextLoader.class)
-public class NoteDaoTest {
+class NoteDaoTest {
 
     @Autowired
     private NotesDAO notesDAO;
@@ -24,7 +26,7 @@ public class NoteDaoTest {
     private static List<Note> notes;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         notes = new ArrayList<>();
         notes.add(new Note(1L, 1L, "Note1"));
         notes.add(new Note(2L, 1L, "Note2"));
@@ -35,7 +37,7 @@ public class NoteDaoTest {
     }
 
     @Test
-    public void  addNoteTest() {
+    void  addNoteTest() {
         clearDb();
         long lastId = 0;
         for (Note n :
@@ -49,10 +51,10 @@ public class NoteDaoTest {
     }
 
     @Test
-    public void removeTest() {
+    void removeTest() {
         insertNotes();
         Note noteFromDb = notesDAO.getAllNotes().get(1);
-        notesDAO.removeNote(noteFromDb.getId());
+        notesDAO.removeNoteByNoteId(noteFromDb.getId());
         List<Note> restNotes = notesDAO.getAllNotes();
         boolean removed = true;
         for (Note n :
@@ -67,22 +69,41 @@ public class NoteDaoTest {
     }
 
     @Test
-    public void getNoteByIdTest() {
+    void getNoteByIdTest() {
         insertNotes();
         Note firstNote = notesDAO.getOneNote(1L);
         Assertions.assertNotNull(firstNote, "Could not get Note by id 1");
     }
 
     @Test
-    public void indexTest() {
-        clearDb();
+    void getNoteWithNotExistingIdTest() {
         insertNotes();
-        List<Note> notesFromDb = notesDAO.getAllNotes();
-        Assertions.assertTrue(notes.equals(notesFromDb), "Recorded and returned list are not equals.");
+        List<Note> notes = notesDAO.getAllNotes();
+        long maxId = notes.stream().map(Note::getId).max(Long::compareTo).orElse(100L);
+        Note notExistingNote = notesDAO.getOneNote(maxId + 10);
+        Assertions.assertNull(notExistingNote, "Db returned note with not existing id");
     }
 
     @Test
-    public void getAllByUserIdTest() {
+    void getNoteWithNotExistingUserIdTest() {
+        insertNotes();
+        List<Note> notes = notesDAO.getAllNotes();
+        long maxUserId = notes.stream().map(Note::getUserId).max(Long::compareTo).orElse(100L);
+        List<Note> notExistingNotes = notesDAO.getNotesByUserId(maxUserId + 10L);
+        Assertions.assertEquals(notExistingNotes.size(), 0, "Db returned note with not existing userId");
+    }
+
+    @Test
+    void indexTest() {
+        clearDb();
+        insertNotes();
+        List<Note> notesFromDb = notesDAO.getAllNotes();
+        assertThat(notesFromDb).isNotNull()
+                .containsExactlyInAnyOrderElementsOf(notes);
+    }
+
+    @Test
+    void getAllByUserIdTest() {
         clearDb();
         insertNotes();
         List<Note> notesOfUser1 = notesDAO.getNotesByUserId(1L);
@@ -95,11 +116,11 @@ public class NoteDaoTest {
     }
 
     @Test
-    public void removeUserNotesTest() {
+    void removeUserNotesTest() {
         insertNotes();
         List<Note> user1Notes = notesDAO.getNotesByUserId(1);
         Assertions.assertTrue(user1Notes.size() > 0, "Db doesn`t contains notes for userId = 1.");
-        notesDAO.removeUserNotes(1);
+        notesDAO.removeNotesByUserId(1);
         List<Note> removedNotes = notesDAO.getNotesByUserId(1);
         Assertions.assertEquals(0, removedNotes.size(), "Notes od user with userId = 1 was not removed.");
         clearDb();
@@ -116,7 +137,7 @@ public class NoteDaoTest {
         List<Note> notes = notesDAO.getAllNotes();
         for (Note n :
                 notes) {
-            notesDAO.removeNote(n.getId());
+            notesDAO.removeNoteByNoteId(n.getId());
         }
     }
 }

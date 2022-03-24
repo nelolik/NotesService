@@ -5,7 +5,7 @@
     <title>Человек</title>
 </head>
 
-<a th:text="${'Notes of ' + user.getName()}"> text</a>
+<a th:text="${'Notes of ' + user.getUsername()}"> text</a>
 <br>
 <br>
 <div th:each="note: ${notes}">

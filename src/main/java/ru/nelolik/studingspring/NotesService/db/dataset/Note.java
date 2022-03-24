@@ -3,6 +3,7 @@ package ru.nelolik.studingspring.NotesService.db.dataset;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Note {
     @Id
     @SequenceGenerator(name = "notes_id", sequenceName = "notes_id_seq", allocationSize = 1)
@@ -25,9 +27,6 @@ public class Note {
 
     @Column(name = "record")
     private String record;
-
-    public Note() {
-    }
 
     @Override
     public boolean equals(Object o) {

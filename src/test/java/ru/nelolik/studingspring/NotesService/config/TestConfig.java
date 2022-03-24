@@ -6,37 +6,38 @@ import org.hibernate.service.ServiceRegistry;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import ru.nelolik.studingspring.NotesService.db.dao.NotesDAO;
-import ru.nelolik.studingspring.NotesService.db.dao.NotesDAO_Hibernate;
-import ru.nelolik.studingspring.NotesService.db.dao.UsersDAO_Hibernate;
-import ru.nelolik.studingspring.NotesService.db.dao.UsersDAO;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import ru.nelolik.studingspring.NotesService.db.dao.*;
 import ru.nelolik.studingspring.NotesService.db.dataset.Note;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
-import ru.nelolik.studingspring.NotesService.db.service.NotesService;
-import ru.nelolik.studingspring.NotesService.db.service.NotesServiceImpl;
-import ru.nelolik.studingspring.NotesService.db.service.UserServiceImpl;
-import ru.nelolik.studingspring.NotesService.db.service.UsersService;
-
-import static org.mockito.Mockito.mock;
+import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
 
 @TestConfiguration
 @ComponentScan("test.ru.nelolik.studingspring.NotesService")
+@EnableJpaRepositories
 public class TestConfig {
 
     @Bean
     public UsersDAO usersDao() {
-        return new UsersDAO_Hibernate(createSessionFactory(getH2Configuration()));
+        return new UsersDAO_ImplementedWithHibernate(createTestSessionFactory(getH2Configuration()));
     }
 
     @Bean
     public NotesDAO notesDAO() {
-        return new NotesDAO_Hibernate(createSessionFactory(getH2Configuration()));
+        return new NotesDAO_ImplementedWithHibernate(createTestSessionFactory(getH2Configuration()));
     }
 
+    @Bean
+    UserRoleDAO userRoleDAO() {
+        return new UserRoleDAOImplementation(createTestSessionFactory(getH2Configuration()));
+    }
+
+    @Bean
     public org.hibernate.cfg.Configuration getH2Configuration() {
         org.hibernate.cfg.Configuration configuration = new org.hibernate.cfg.Configuration();
         configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(Note.class);
+        configuration.addAnnotatedClass(UserRole.class);
 
         configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
         configuration.setProperty("hibernate.connection.driver_class", "org.h2.Driver");
@@ -49,7 +50,8 @@ public class TestConfig {
         return configuration;
     }
 
-    public static SessionFactory createSessionFactory(org.hibernate.cfg.Configuration configuration) {
+    @Bean
+    public static SessionFactory createTestSessionFactory(org.hibernate.cfg.Configuration configuration) {
         StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder();
         builder.applySettings(configuration.getProperties());
         ServiceRegistry serviceRegistry = builder.build();

@@ -1,101 +1,111 @@
 package ru.nelolik.studingspring.NotesService.db.dao;
 
+import org.assertj.core.groups.Tuple;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import ru.nelolik.studingspring.NotesService.config.TestConfig;
+import ru.nelolik.studingspring.NotesService.db.dataset.Role;
 import ru.nelolik.studingspring.NotesService.db.dataset.User;
+import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.*;
+
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestConfig.class, loader = AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes = {TestConfig.class, UserRoleDAOImplementation.class}, loader = AnnotationConfigContextLoader.class)
 public class UserDaoTest {
 
 
     private UsersDAO usersDao;
 
     @Autowired
-    public UserDaoTest(UsersDAO usersService) {
-        this.usersDao = usersService;
+    public UserDaoTest(UsersDAO usersDAO) {
+        this.usersDao = usersDAO;
     }
 
     private static List<User> users;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         users = new ArrayList<>();
-        users.add(new User((long)1, "Aleks"));
-        users.add(new User((long)2, "Mikle"));
-        users.add(new User((long)3, "Jessika"));
+        users.add(new User((long)1, "Aleks", "password", Collections.singletonList(new UserRole(1L, Role.ROLE_USER.name()))));
+        users.add(new User((long)2, "Mikle", "password", Collections.singletonList(new UserRole(2L, Role.ROLE_USER.name()))));
+        users.add(new User((long)3, "Jessika", "password", Collections.singletonList(new UserRole(3L, Role.ROLE_USER.name()))));
 
     }
 
+    @AfterEach
+    void clearContext() {
+        clearDb();
+    }
+
     @Test
-    public void insertValuesTest() {
-        long lastId = 0;
+    void insertValuesTest() {
         for (User user :
                 users) {
-            lastId = usersDao.insert(user);
+            usersDao.insertUser(user);
         }
-        Assertions.assertEquals(users.size(), lastId,
-                "Count of inserted values is not equal to users size");
+        List<User> usersFromDb = usersDao.getAllUsers();
+        assertThat(usersFromDb).isNotNull()
+                .containsExactlyInAnyOrderElementsOf(users);
     }
 
     @Test
-    public void indexTest() {
-        clearDb();
+    void indexTest() {
         insertUsers();
-        List<User> usersFromDb = usersDao.index();
-        boolean sizeEqual = users.size() == usersFromDb.size();
-        Assertions.assertTrue(sizeEqual, "Count of written and read records differs");
-        boolean elementsAreEqual = true;
+        List<User> usersFromDb = usersDao.getAllUsers();
 
-        if (sizeEqual) {
-            for (User u :
-                    users) {
-                elementsAreEqual &= usersFromDb.contains(u);
-            }
-        } else {
-            elementsAreEqual = false;
-        }
-        Assertions.assertTrue(elementsAreEqual, "Recorde list of users is not equal to written list of users");
+        assertThat(usersFromDb).isNotNull().containsExactlyInAnyOrderElementsOf(users);
     }
 
     @Test
-    public void readUserTest() {
-        User userFromDb = usersDao.index().get(0);
+    void readUserTest() {
+        insertUsers();
+        User userFromDb = usersDao.getAllUsers().get(0);
         if (userFromDb != null) {
-            User user = usersDao.user(userFromDb.getId());
-            Assertions.assertTrue(user.equals(userFromDb), "Users with the same id are not equal.");
+            User user = usersDao.getUserById(userFromDb.getId());
+            Assertions.assertEquals(user, userFromDb, "Users with the same id are not equal.");
         } else {
-            Assertions.assertEquals(true, false, "Empty index");
+            Assertions.fail("Empty list of users in db");
         }
     }
 
     @Test
-    public void testEdit() {
-        User userFromDb = usersDao.index().get(1);
-        String oldName = userFromDb.getName();
-        userFromDb.setName("New name");
-        usersDao.edit(userFromDb);
-        User newUser = usersDao.user(userFromDb.getId());
-        Assertions.assertTrue(newUser.equals(userFromDb), "Edited name is not the same like new one. Old name: "
-                + oldName + " New name: " + newUser.getName());
+    void readNotExistingUserTest() {
+        insertUsers();
+        long maxId = usersDao.getAllUsers().stream().map(User::getId).max(Long::compareTo).orElse(1L);
+        User userFromDb = usersDao.getUserById(maxId + 10L);
+        Assertions.assertNull(userFromDb, "Db return User with not existing id.");
     }
 
     @Test
-    public void testDelete() {
+    void testEdit() {
         insertUsers();
-        User userFromDb = usersDao.index().get(1);
-        usersDao.delete(userFromDb.getId());
-        List<User> allUsers = usersDao.index();
+        User userFromDb = usersDao.getAllUsers().get(1);
+        String oldName = userFromDb.getUsername();
+        userFromDb.setUsername("New name");
+        usersDao.editUser(userFromDb);
+        User newUser = usersDao.getUserById(userFromDb.getId());
+        Assertions.assertEquals(newUser, userFromDb, "Edited name is not the same like new one. Old name: "
+                + oldName + " New name: " + newUser.getUsername());
+    }
+
+    @Test
+    void testDelete() {
+        insertUsers();
+        User userFromDb = usersDao.getAllUsers().get(1);
+        usersDao.deleteUserById(userFromDb.getId());
+        List<User> allUsers = usersDao.getAllUsers();
         boolean deleted = true;
         for (User u :
                 allUsers) {
@@ -105,42 +115,54 @@ public class UserDaoTest {
             }
         }
         Assertions.assertTrue(deleted, "User was not deleted from db.");
-        clearDb();
     }
 
     @Test
-    public void testAutoincrement() {
+    void testAutoincrement() {
         insertUsers();
+        long maxOldId = users.stream().map(User::getId).max(Long::compareTo).orElse(-1L);
         User newUser = new User();
         long oldId = 1;
         newUser.setId(oldId);
-        newUser.setName("Autoname");
-        usersDao.insert(newUser);
-        List<User> result = usersDao.index();
-        boolean changed = true;
-        for (User u :
-                result) {
-            if (u.getName().equals("Autoname") && u.getId() == oldId) {
-                changed = false;
-                break;
-            }
-        }
-        Assertions.assertTrue(changed, "Id of new record wasn`t auto incremented");
-        clearDb();
+        newUser.setUsername("Autoname");
+        newUser.setPassword("autopassword");
+        newUser.setRoles(Collections.singletonList(new UserRole(oldId, Role.ROLE_USER.name())));
+        usersDao.insertUser(newUser);
+        List<User> result = usersDao.getAllUsers();
+        assertThat(result).isNotNull()
+                .extracting(User::getUsername, User::getId)
+                .containsOnlyOnce(Tuple.tuple("Autoname", maxOldId + 1));
+    }
+
+    @Test
+    void insertUserSetsRightUserIdInUserRole() {
+        insertUsers();
+        User newUser = new User();
+        newUser.setId(1L);
+        newUser.setUsername("New Name");
+        newUser.setPassword("NewPassword");
+        newUser.setRoles(Collections.singletonList(new UserRole(1L, Role.ROLE_USER.name())));
+        long userId = usersDao.insertUser(newUser);
+        User fromDb = usersDao.getUserById(userId);
+        Assertions.assertEquals(fromDb.getId(), fromDb.getRoles().get(0).getUserid());
     }
 
     private void insertUsers() {
         for (User user :
                 users) {
-            usersDao.insert(user);
+            usersDao.insertUser(user);
+            for (UserRole r :
+                    user.getRoles()) {
+                r.setUserid(user.getId());
+            }
         }
     }
 
     private void clearDb() {
-        List<User> allUsers = usersDao.index();
+        List<User> allUsers = usersDao.getAllUsers();
         for (User u :
                 allUsers) {
-            usersDao.delete(u.getId());
+            usersDao.deleteUserById(u.getId());
         }
     }
 

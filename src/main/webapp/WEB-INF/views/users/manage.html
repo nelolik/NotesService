@@ -8,13 +8,13 @@
 <br/>
 <div th:each="user: ${users}">
     <form th:method="POST"
-          th:action="@{/users/manage?method=edit&id={id}(id=${user.getId()})}">
+          th:action="@{/users/manage/edit?id={id}(id=${user.getId()})}">
         <label for="userName">User name: </label>
-        <input type="text" th:value="${user.getName()}" name="name" id="userName">
+        <input type="text" th:value="${user.getUsername()}" name="name" id="userName">
         <input type="submit" value="Edit">
     </form>
     <form th:method="POST"
-          th:action="@{/users/manage?method=delete&id={id}(id=${user.getId()})}">
+          th:action="@{/users/manage/delete?id={id}(id=${user.getId()})}">
         <input type="submit" value="Delete">
     </form>
     <hr/>
