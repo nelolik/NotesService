@@ -18,6 +18,7 @@ import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
 
 @TestConfiguration
 @ComponentScan("ru.nelolik.studingspring.NotesService.db")
+@ComponentScan("ru.nelolik.studingspring.NotesService.dto")
 public class TestContainerConfig {
 
     @Bean(initMethod = "start", destroyMethod = "stop")

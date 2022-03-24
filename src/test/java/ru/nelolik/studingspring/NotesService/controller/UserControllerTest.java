@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.nelolik.studingspring.NotesService.config.TestContainerConfig;
+import ru.nelolik.studingspring.NotesService.dto.NoteToDtoConverter;
+import ru.nelolik.studingspring.NotesService.dto.UserToDtoConverter;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -16,7 +18,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
-@ContextConfiguration(classes = {TestContainerConfig.class, UsersController.class})
+@ContextConfiguration(classes = {TestContainerConfig.class, UsersController.class,
+        UserToDtoConverter.class, NoteToDtoConverter.class})
 @AutoConfigureMockMvc(addFilters = false)
 public class UserControllerTest {
 
@@ -78,9 +81,7 @@ public class UserControllerTest {
                 andExpect(content().contentType(MediaType.valueOf("application/json"))).
                 andExpect(content().string(containsString("user"))).
                 andExpect(content().string(containsString("notes"))).
-                andExpect(content().string(containsString("username"))).
-                andExpect(content().string(containsString("password"))).
-                andExpect(content().string(containsString("roles")));
+                andExpect(content().string(containsString("username")));
     }
 
     @Test
@@ -88,9 +89,7 @@ public class UserControllerTest {
         mockMvc.perform(get("/users/json")).
                 andExpect(content().contentType(MediaType.valueOf("application/json"))).
                 andExpect(content().string(containsString("id"))).
-                andExpect(content().string(containsString("username"))).
-                andExpect(content().string(containsString("password"))).
-                andExpect(content().string(containsString("roles")));
+                andExpect(content().string(containsString("username")));
     }
 
 }

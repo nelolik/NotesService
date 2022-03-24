@@ -4,7 +4,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import ru.nelolik.studingspring.NotesService.config.TestConfig;
 import ru.nelolik.studingspring.NotesService.db.dao.NotesDAO;
 import ru.nelolik.studingspring.NotesService.db.dao.UsersDAO;
 import ru.nelolik.studingspring.NotesService.db.dataset.Note;
@@ -21,6 +26,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
+@ContextConfiguration(classes = {TestConfig.class, UsersDAO.class, NotesDAO.class, UserDataServiceImpl.class})
 public class UserDataServiceTest {
 
     @MockBean
