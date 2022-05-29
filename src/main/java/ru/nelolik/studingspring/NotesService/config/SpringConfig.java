@@ -1,10 +1,15 @@
 package ru.nelolik.studingspring.NotesService.config;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.service.ServiceRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +24,8 @@ import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
 
 @Configuration
 @EnableJpaRepositories("ru.nelolik.studingspring.NotesService.db")
+@Slf4j
+@EnableCaching
 public class SpringConfig implements WebMvcConfigurer {
 
     @Autowired
@@ -59,6 +66,11 @@ public class SpringConfig implements WebMvcConfigurer {
         builder.applySettings(configuration.getProperties());
         ServiceRegistry serviceRegistry = builder.build();
         return configuration.buildSessionFactory(serviceRegistry);
+    }
+
+    @Bean
+    public CacheManager cacheManager() {
+        return new ConcurrentMapCacheManager("users");
     }
 
 }

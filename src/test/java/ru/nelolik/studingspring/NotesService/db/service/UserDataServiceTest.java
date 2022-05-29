@@ -1,14 +1,14 @@
 package ru.nelolik.studingspring.NotesService.db.service;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.ApplicationContext;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import ru.nelolik.studingspring.NotesService.config.TestConfig;
 import ru.nelolik.studingspring.NotesService.db.dao.NotesDAO;
 import ru.nelolik.studingspring.NotesService.db.dao.UsersDAO;
@@ -38,6 +38,9 @@ public class UserDataServiceTest {
     @Autowired
     UserDataService service;
 
+    @Autowired
+    CacheManager cacheManager;
+
     private static long USER_ID = 1;
     private static final User USER = new User(USER_ID, "User name", "p1",
             Collections.singletonList(new UserRole(USER_ID, Role.ROLE_USER.name())));
@@ -56,6 +59,14 @@ public class UserDataServiceTest {
     private static final List<Note> NOTES = Arrays.asList(NOTE1, NOTE2, NOTE3);
     private static final List<Note> NOTES_USER1 = Arrays.asList(NOTE1, NOTE2);
     private static final List<Note> NOTES_USER2 = Arrays.asList(NOTE3);
+
+    @BeforeEach
+    void beforeEach() {
+        Cache cache = cacheManager.getCache("users");
+        if (cache != null) {
+            cache.clear();
+        }
+    }
 
     @Test
     void getUserByIdTest() {
@@ -79,7 +90,7 @@ public class UserDataServiceTest {
     @Test
     void removeUserByIdTest() {
         service.removeUserById(USER_ID);
-        verify(usersDAO,atLeastOnce()).deleteUserById(eq(USER_ID));
+        verify(usersDAO, atLeastOnce()).deleteUserById(eq(USER_ID));
     }
 
     @Test
@@ -87,6 +98,44 @@ public class UserDataServiceTest {
         when(usersDAO.getAllUsers()).thenReturn(USER_LIST);
         List<User> result = service.getAllUsers();
         Assertions.assertEquals(USER_LIST, result, "Method index returned wrong result");
+    }
+
+    @Test
+    void getAllUsersCachedTest() {
+        when(usersDAO.getAllUsers()).thenReturn(USER_LIST);
+        List<User> result = service.getAllUsers();
+        verify(usersDAO, atLeastOnce()).getAllUsers();
+
+        reset(usersDAO);
+        when(usersDAO.getAllUsers()).thenReturn(USER_LIST);
+        List<User> resultCached = service.getAllUsers();
+        verify(usersDAO, never()).getAllUsers();
+        Assertions.assertEquals(result, resultCached);
+    }
+
+    @Test
+    void getAllUsersCacheEvictedOnModification() {
+        when(usersDAO.getAllUsers()).thenReturn(USER_LIST);
+        List<User> result = service.getAllUsers();
+        verify(usersDAO, atLeastOnce()).getAllUsers();
+
+        reset(usersDAO);
+        service.editUser(result.get(0));
+        when(usersDAO.getAllUsers()).thenReturn(USER_LIST);
+        service.getAllUsers();
+        verify(usersDAO, atLeastOnce()).getAllUsers();
+    }
+
+    @Test
+    void getAllUsersCacheEvictedOnDelete() {
+        when(usersDAO.getAllUsers()).thenReturn(USER_LIST);
+        List<User> result = service.getAllUsers();
+        verify(usersDAO, atLeastOnce()).getAllUsers();
+
+        reset(usersDAO);
+        service.removeUserById(USER_ID);
+        service.getAllUsers();
+        verify(usersDAO, atLeastOnce()).getAllUsers();
     }
 
     @Test

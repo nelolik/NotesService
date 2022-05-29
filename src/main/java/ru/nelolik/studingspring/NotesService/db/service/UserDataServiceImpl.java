@@ -1,6 +1,10 @@
 package ru.nelolik.studingspring.NotesService.db.service;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 import ru.nelolik.studingspring.NotesService.db.dao.NotesDAO;
 import ru.nelolik.studingspring.NotesService.db.dao.UsersDAO;
@@ -12,6 +16,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class UserDataServiceImpl implements UserDataService {
 
     private final UsersDAO usersDao;
@@ -20,7 +25,9 @@ public class UserDataServiceImpl implements UserDataService {
 
 
     @Override
+    @Cacheable("users")
     public List<User> getAllUsers() {
+        log.debug("Running getAllUsers");
         return usersDao.getAllUsers();
     }
 
@@ -40,11 +47,13 @@ public class UserDataServiceImpl implements UserDataService {
     }
 
     @Override
+    @CacheEvict(value = "users", allEntries = true)
     public void editUser(User user) {
         usersDao.editUser(user);
     }
 
     @Override
+    @CacheEvict(value = "users", allEntries = true)
     public void removeUserById(long id) {
         usersDao.deleteUserById(id);
     }

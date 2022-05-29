@@ -49,6 +49,7 @@ public class UsersController {
         List<User> users = service.getAllUsers();
         List<UserDTO> dtos = userToDtoConverter.usersToDto(users);
         ObjectMapper mapper = new ObjectMapper();
+        log.debug("Request GET to address /users. Method getAllUsersJson()");
         return mapper.writeValueAsString(dtos);
     }
 
