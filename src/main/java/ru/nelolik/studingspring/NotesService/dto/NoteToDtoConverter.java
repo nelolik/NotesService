@@ -14,6 +14,5 @@ public interface NoteToDtoConverter {
 
     Note noteDtoToNote(NoteDTO dto);
 
-
     List<Note> noteDtosToNotes(List<NoteDTO> dtos);
 }

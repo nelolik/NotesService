@@ -29,5 +29,5 @@ public interface UserDataService {
 
     void removeNotesByUserId(long userId);
 
-    void removeNote(long id);
+    void removeNote(long id, long userId);
 }

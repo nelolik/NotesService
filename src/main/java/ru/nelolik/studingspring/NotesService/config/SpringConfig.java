@@ -70,7 +70,9 @@ public class SpringConfig implements WebMvcConfigurer {
 
     @Bean
     public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("users");
+        return new ConcurrentMapCacheManager(CacheNames.ALL_USERS,
+                CacheNames.USER,
+                CacheNames.NOTES);
     }
 
 }

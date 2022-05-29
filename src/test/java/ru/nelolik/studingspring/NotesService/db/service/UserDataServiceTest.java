@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ContextConfiguration;
+import ru.nelolik.studingspring.NotesService.config.CacheNames;
 import ru.nelolik.studingspring.NotesService.config.TestConfig;
 import ru.nelolik.studingspring.NotesService.db.dao.NotesDAO;
 import ru.nelolik.studingspring.NotesService.db.dao.UsersDAO;
@@ -62,7 +63,15 @@ public class UserDataServiceTest {
 
     @BeforeEach
     void beforeEach() {
-        Cache cache = cacheManager.getCache("users");
+        Cache cache = cacheManager.getCache(CacheNames.ALL_USERS);
+        if (cache != null) {
+            cache.clear();
+        }
+        cache = cacheManager.getCache(CacheNames.NOTES);
+        if (cache != null) {
+            cache.clear();
+        }
+        cache = cacheManager.getCache(CacheNames.USER);
         if (cache != null) {
             cache.clear();
         }
@@ -73,6 +82,43 @@ public class UserDataServiceTest {
         when(usersDAO.getUserById(USER_ID)).thenReturn(USER);
         User u = service.getUserById(USER_ID);
         Assertions.assertEquals(USER, u, "Mocked user and returned user ane not equal.");
+    }
+
+    @Test
+    void getUserByIdIsCached() {
+        when(usersDAO.getUserById(USER_ID)).thenReturn(USER);
+        service.getUserById(USER_ID);
+        verify(usersDAO, atLeastOnce()).getUserById(USER_ID);
+
+        reset(usersDAO);
+        when(usersDAO.getUserById(USER_ID)).thenReturn(USER);
+        service.getUserById(USER_ID);
+        verify(usersDAO, never()).getUserById(USER_ID);
+    }
+
+    @Test
+    void getUserByIdCacheIsEvictedOnEditUser() {
+        when(usersDAO.getUserById(USER_ID)).thenReturn(USER);
+        service.getUserById(USER_ID);
+        verify(usersDAO, atLeastOnce()).getUserById(USER_ID);
+
+        reset(usersDAO);
+        when(usersDAO.getUserById(USER_ID)).thenReturn(USER);
+        service.editUser(USER);
+        service.getUserById(USER_ID);
+        verify(usersDAO, atLeastOnce()).getUserById(USER_ID);
+    }
+
+    @Test
+    void getUserByIdCacheIsEvictedOnRemoveUser() {
+        when(usersDAO.getUserById(USER_ID)).thenReturn(USER);
+        service.getUserById(USER_ID);
+        verify(usersDAO, atLeastOnce()).getUserById(USER_ID);
+
+        reset(usersDAO);
+        service.removeUserById(USER_ID);
+        service.getUserById(USER_ID);
+        verify(usersDAO, atLeastOnce()).getUserById(USER_ID);
     }
 
     @Test
@@ -129,7 +175,7 @@ public class UserDataServiceTest {
     @Test
     void getAllUsersCacheEvictedOnDelete() {
         when(usersDAO.getAllUsers()).thenReturn(USER_LIST);
-        List<User> result = service.getAllUsers();
+        service.getAllUsers();
         verify(usersDAO, atLeastOnce()).getAllUsers();
 
         reset(usersDAO);
@@ -150,6 +196,55 @@ public class UserDataServiceTest {
         when(notesDAO.getNotesByUserId(USER_ID1)).thenReturn(NOTES_USER1);
         List<Note> result = service.getNotesByUserId(USER_ID1);
         Assertions.assertEquals(NOTES_USER1, result);
+    }
+
+    @Test
+    void getNotesByUserIdCachedTest() {
+        when(notesDAO.getNotesByUserId(USER_ID1)).thenReturn(NOTES_USER1);
+        service.getNotesByUserId(USER_ID1);
+        verify(notesDAO, atLeastOnce()).getNotesByUserId(USER_ID1);
+
+        reset(notesDAO);
+        when(notesDAO.getNotesByUserId(USER_ID1)).thenReturn(NOTES_USER1);
+        service.getNotesByUserId(USER_ID1);
+        verify(notesDAO, never()).getNotesByUserId(USER_ID1);
+    }
+
+    @Test
+    void getNotesByUserIdCachedOnRightKey() {
+        when(notesDAO.getNotesByUserId(USER_ID1)).thenReturn(NOTES_USER1);
+        service.getNotesByUserId(USER_ID1);
+        verify(notesDAO, atLeastOnce()).getNotesByUserId(USER_ID1);
+
+        reset(notesDAO);
+        when(notesDAO.getNotesByUserId(USER_ID1)).thenReturn(NOTES_USER1);
+        when(notesDAO.getNotesByUserId(USER_ID2)).thenReturn(NOTES_USER2);
+        service.getNotesByUserId(USER_ID2);
+        verify(notesDAO, atLeastOnce()).getNotesByUserId(USER_ID2);
+    }
+
+    @Test
+    void getNotesByUserIdCacheEvictedOnUserRemove() {
+        when(notesDAO.getNotesByUserId(USER_ID1)).thenReturn(NOTES_USER1);
+        service.getNotesByUserId(USER_ID1);
+        verify(notesDAO, atLeastOnce()).getNotesByUserId(USER_ID1);
+
+        reset(notesDAO);
+        service.removeNotesByUserId(USER_ID1);
+        service.getNotesByUserId(USER_ID1);
+        verify(notesDAO, atLeastOnce()).getNotesByUserId(USER_ID1);
+    }
+
+    @Test
+    void getNotesByUserIdCacheEvictedOnNoteRemove() {
+        when(notesDAO.getNotesByUserId(USER_ID1)).thenReturn(NOTES_USER1);
+        service.getNotesByUserId(USER_ID1);
+        verify(notesDAO, atLeastOnce()).getNotesByUserId(USER_ID1);
+
+        reset(notesDAO);
+        service.removeNote(NOTE_ID, USER_ID1);
+        service.getNotesByUserId(USER_ID1);
+        verify(notesDAO, atLeastOnce()).getNotesByUserId(USER_ID1);
     }
 
     @Test
@@ -174,7 +269,7 @@ public class UserDataServiceTest {
 
     @Test
     void removeNote() {
-        service.removeNote(NOTE_ID);
+        service.removeNote(NOTE_ID, USER_ID);
         verify(notesDAO, atLeastOnce()).removeNoteByNoteId(eq(NOTE_ID));
     }
 }

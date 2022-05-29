@@ -163,7 +163,7 @@ public class UsersController {
     @GetMapping("{userId}/{noteId}")
     public String removeUsersNote(@PathVariable("userId") long userId,
                                   @PathVariable("noteId") long noteId) {
-        service.removeNote(noteId);
+        service.removeNote(noteId, userId);
         log.debug("Request GET to /users/{}/{}. Method removeUsersNote().", userId, noteId);
         return "redirect:/users/" + userId;
     }
