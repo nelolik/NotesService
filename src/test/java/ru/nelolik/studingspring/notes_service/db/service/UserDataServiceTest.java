@@ -1,4 +1,4 @@
-package ru.nelolik.studingspring.NotesService.db.service;
+package ru.nelolik.studingspring.notes_service.db.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,14 +9,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ContextConfiguration;
-import ru.nelolik.studingspring.NotesService.config.CacheNames;
-import ru.nelolik.studingspring.NotesService.config.TestConfig;
-import ru.nelolik.studingspring.NotesService.db.dao.NotesDAO;
-import ru.nelolik.studingspring.NotesService.db.dao.UsersDAO;
-import ru.nelolik.studingspring.NotesService.db.dataset.Note;
-import ru.nelolik.studingspring.NotesService.db.dataset.Role;
-import ru.nelolik.studingspring.NotesService.db.dataset.User;
-import ru.nelolik.studingspring.NotesService.db.dataset.UserRole;
+import ru.nelolik.studingspring.notes_service.config.CacheNames;
+import ru.nelolik.studingspring.notes_service.config.TestConfig;
+import ru.nelolik.studingspring.notes_service.db.dao.NotesDAO;
+import ru.nelolik.studingspring.notes_service.db.dao.UsersDAO;
+import ru.nelolik.studingspring.notes_service.db.dataset.Note;
+import ru.nelolik.studingspring.notes_service.db.dataset.Role;
+import ru.nelolik.studingspring.notes_service.db.dataset.User;
+import ru.nelolik.studingspring.notes_service.db.dataset.UserRole;
 
 import java.util.Arrays;
 import java.util.Collections;
