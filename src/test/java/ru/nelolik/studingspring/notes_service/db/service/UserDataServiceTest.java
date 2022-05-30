@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ContextConfiguration(classes = {TestConfig.class, UsersDAO.class, NotesDAO.class, UserDataServiceImpl.class})
-public class UserDataServiceTest {
+class UserDataServiceTest {
 
     @MockBean
     UsersDAO usersDAO;
