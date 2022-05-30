@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import ru.nelolik.studingspring.notes_service.db.dataset.Role;
 import ru.nelolik.studingspring.notes_service.db.dataset.User;
 import ru.nelolik.studingspring.notes_service.db.dataset.UserRole;
-import ru.nelolik.studingspring.notes_service.db.service.UserDataService;
+import ru.nelolik.studingspring.notes_service.db.service.UserService;
 
 import java.util.Collections;
 
@@ -19,7 +19,7 @@ import java.util.Collections;
 public class RegistrationController {
 
     @Autowired
-    UserDataService usersService;
+    UserService usersService;
 
     @GetMapping("/registration")
     public String registration(Model model) {

@@ -12,7 +12,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.nelolik.studingspring.notes_service.db.dataset.Note;
 import ru.nelolik.studingspring.notes_service.db.dataset.User;
-import ru.nelolik.studingspring.notes_service.db.service.UserDataService;
+import ru.nelolik.studingspring.notes_service.db.service.NoteService;
+import ru.nelolik.studingspring.notes_service.db.service.UserService;
 import ru.nelolik.studingspring.notes_service.dto.NoteDTO;
 import ru.nelolik.studingspring.notes_service.dto.NoteToDtoConverter;
 import ru.nelolik.studingspring.notes_service.dto.UserDTO;
@@ -28,7 +29,9 @@ import java.util.*;
 @AllArgsConstructor
 public class UsersController {
 
-    private final UserDataService service;
+    private final UserService userService;
+
+    private final NoteService noteService;
 
     private final UserToDtoConverter userToDtoConverter;
 
@@ -36,7 +39,7 @@ public class UsersController {
 
     @GetMapping()
     public String getAllUsers(Model model) {
-        List<User> users = service.getAllUsers();
+        List<User> users = userService.getAllUsers();
         List<UserDTO> dtos = userToDtoConverter.usersToDto(users);
         model.addAttribute("users", dtos);
         log.debug("Request GET to address /users. Method getAllUsers()");
@@ -46,7 +49,7 @@ public class UsersController {
     @GetMapping(value = "/json", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody()
     public String getAllUsersJson() throws JsonProcessingException {
-        List<User> users = service.getAllUsers();
+        List<User> users = userService.getAllUsers();
         List<UserDTO> dtos = userToDtoConverter.usersToDto(users);
         ObjectMapper mapper = new ObjectMapper();
         log.debug("Request GET to address /users. Method getAllUsersJson()");
@@ -60,14 +63,14 @@ public class UsersController {
             return "redirect:/users";
         }
         UserDTO userDTO = new UserDTO(0L, input.getInput());
-        service.insertUser(userToDtoConverter.userDtoToUser(userDTO));
+        userService.insertUser(userToDtoConverter.userDtoToUser(userDTO));
         log.debug("Request GET to /users/new. Method addNewUser(). New username: {}", input.getInput());
         return "redirect:/users";
     }
 
     @GetMapping("/manage")
     public String manageUsers(Model model) {
-        List<User> users = service.getAllUsers();
+        List<User> users = userService.getAllUsers();
         List<UserDTO> dtos = userToDtoConverter.usersToDto(users);
         model.addAttribute("users", dtos);
         log.debug("Request GET to /users/manage. Method manageUsers().");
@@ -79,8 +82,8 @@ public class UsersController {
         String id = request.getParameter("id");
         if (id != null) {
             long userId = Long.valueOf(id);
-            service.removeUserById(userId);
-            service.removeNotesByUserId(userId);
+            userService.removeUserById(userId);
+            noteService.removeNotesByUserId(userId);
             log.debug("Request POST to /users/manage/delete. Method deleteUser(). Removed user and his notes with userId={}",
                     userId);
         } else {
@@ -99,14 +102,14 @@ public class UsersController {
             return "redirect:/users/manage";
         }
         Long id = Long.valueOf(id_string);
-        User user = service.getUserById(id);
+        User user = userService.getUserById(id);
         if (user == null) {
             log.debug("Request POST to /users/manage/edit. Method manageUsers(). User with id ={} is not registered",
                     id);
             return "redirect:/users/manage";
         }
         user.setUsername(name);
-        service.editUser(user);
+        userService.editUser(user);
         log.debug("Request POST to /users/manage/edit. Method manageUsers(). Edited user with id={}, name={}",
                 id, name);
         return "redirect:/users/manage";
@@ -115,18 +118,18 @@ public class UsersController {
 
         @GetMapping("/{id}")
     public String showUser(@PathVariable("id") long id, Model model) {
-        User user = service.getUserById(id);
-        List<Note> notes = service.getNotesByUserId(id);
-        if (user == null) {
-            user = new User();
-        }
-        if (notes == null) {
-            notes = new ArrayList<>();
-        }
-        UserDTO userDTO = userToDtoConverter.userToDto(user);
-        List<NoteDTO> noteDTOS = noteToDtoConverter.notesToDto(notes);
-        model.addAttribute("user", userDTO);
-        model.addAttribute("notes", noteDTOS);
+            User user = userService.getUserById(id);
+            List<Note> notes = noteService.getNotesByUserId(id);
+            if (user == null) {
+                user = new User();
+            }
+            if (notes == null) {
+                notes = new ArrayList<>();
+            }
+            UserDTO userDTO = userToDtoConverter.userToDto(user);
+            List<NoteDTO> noteDTOS = noteToDtoConverter.notesToDto(notes);
+            model.addAttribute("user", userDTO);
+            model.addAttribute("notes", noteDTOS);
         log.debug("Request GET to /users/{}. Method showUser()", id);
         return "users/user";
     }
@@ -134,8 +137,8 @@ public class UsersController {
     @GetMapping(value = "{id}/json", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String showUserJson(@PathVariable("id") long id) throws JsonProcessingException {
-        User user = service.getUserById(id);
-        List<Note> notes = service.getNotesByUserId(id);
+        User user = userService.getUserById(id);
+        List<Note> notes = noteService.getNotesByUserId(id);
         UserDTO userDTO = userToDtoConverter.userToDto(user);
         List<NoteDTO> noteDTOS = noteToDtoConverter.notesToDto(notes);
         Map<String, Object> m = new HashMap<>();
@@ -152,7 +155,7 @@ public class UsersController {
                               @PathVariable long id) {
         if (!bindingResult.hasErrors()) {
             NoteDTO noteDTO = new NoteDTO(0L, id, input.getInput());
-            service.addNote(noteToDtoConverter.noteDtoToNote(noteDTO));
+            noteService.addNote(noteToDtoConverter.noteDtoToNote(noteDTO));
         } else {
             log.debug("Note object is null");
         }
@@ -163,7 +166,7 @@ public class UsersController {
     @GetMapping("{userId}/{noteId}")
     public String removeUsersNote(@PathVariable("userId") long userId,
                                   @PathVariable("noteId") long noteId) {
-        service.removeNote(noteId, userId);
+        noteService.removeNote(noteId, userId);
         log.debug("Request GET to /users/{}/{}. Method removeUsersNote().", userId, noteId);
         return "redirect:/users/" + userId;
     }
