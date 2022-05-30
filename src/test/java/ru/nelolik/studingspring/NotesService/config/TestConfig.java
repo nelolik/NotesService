@@ -64,7 +64,8 @@ public class TestConfig {
 
     @Bean
     public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager(CacheNames.ALL_USERS, CacheNames.USER, CacheNames.NOTES);
+        return new ConcurrentMapCacheManager(//CacheNames.ALL_USERS,
+                CacheNames.USER, CacheNames.NOTES);
     }
 
 }

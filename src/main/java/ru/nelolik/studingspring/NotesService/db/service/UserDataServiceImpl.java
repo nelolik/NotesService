@@ -22,9 +22,11 @@ public class UserDataServiceImpl implements UserDataService {
 
     private final NotesDAO notesDAO;
 
+    private static final String CACHE_ID_ALL_USERS = "-1";
 
     @Override
-    @Cacheable(CacheNames.ALL_USERS)
+//    @Cacheable(CacheNames.ALL_USERS)
+    @Cacheable(value = CacheNames.USER, key = CACHE_ID_ALL_USERS)
     public List<User> getAllUsers() {
         return usersDao.getAllUsers();
     }
@@ -41,14 +43,16 @@ public class UserDataServiceImpl implements UserDataService {
     }
 
     @Override
-    @CacheEvict(value = CacheNames.ALL_USERS, allEntries = true)
+//    @CacheEvict(value = CacheNames.ALL_USERS, allEntries = true)
+    @CacheEvict(value = CacheNames.USER, key = CACHE_ID_ALL_USERS)
     public long insertUser(User user) {
         return usersDao.insertUser(user);
     }
 
     @Override
     @Caching(evict = {
-            @CacheEvict(value = CacheNames.ALL_USERS, allEntries = true),
+//            @CacheEvict(value = CacheNames.ALL_USERS, allEntries = true),
+            @CacheEvict(value = CacheNames.USER, key = CACHE_ID_ALL_USERS),
             @CacheEvict(value = CacheNames.USER, key = "#user.getId()")
     })
     public void editUser(User user) {
@@ -57,7 +61,8 @@ public class UserDataServiceImpl implements UserDataService {
 
     @Override
     @Caching(evict = {
-            @CacheEvict(value = CacheNames.ALL_USERS, allEntries = true),
+//            @CacheEvict(value = CacheNames.ALL_USERS, allEntries = true),
+            @CacheEvict(value = CacheNames.USER, key = CACHE_ID_ALL_USERS),
             @CacheEvict(value = CacheNames.USER, key = "#id")
     })
     public void removeUserById(long id) {

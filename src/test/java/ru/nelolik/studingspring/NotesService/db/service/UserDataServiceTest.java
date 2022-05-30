@@ -63,11 +63,11 @@ public class UserDataServiceTest {
 
     @BeforeEach
     void beforeEach() {
-        Cache cache = cacheManager.getCache(CacheNames.ALL_USERS);
-        if (cache != null) {
-            cache.clear();
-        }
-        cache = cacheManager.getCache(CacheNames.NOTES);
+//        Cache cache = cacheManager.getCache(CacheNames.ALL_USERS);
+//        if (cache != null) {
+//            cache.clear();
+//        }
+        Cache cache = cacheManager.getCache(CacheNames.NOTES);
         if (cache != null) {
             cache.clear();
         }
